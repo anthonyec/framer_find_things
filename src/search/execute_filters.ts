@@ -1,5 +1,5 @@
 import type { Filter } from './filters';
-import type { Result, SearchIndex } from './types';
+import type { Result, ResultNode, SearchIndex } from './types';
 
 import { isComponentInstanceNode, isFrameNode, isTextNode } from 'framer-plugin';
 import { isTextFilter } from './filters';

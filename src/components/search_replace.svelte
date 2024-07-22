@@ -1,23 +1,35 @@
 <script lang="ts">
 	import ToggleButton from './toggle_button.svelte';
 
-	let isCaseSensitive: boolean = false;
+	export let query: string;
+	export let caseSensitive: boolean;
+	export let regex: boolean;
+
+	export let replacement: string;
+	export let preserveCase: boolean;
+
+	export let onReplaceAllClick: () => void;
 </script>
 
 <div class="search-replace">
-	<div class="row">
-		<input type="text" />
+	<div class="text-input">
+		<input type="text" placeholder="Search" bind:value={query} />
+
 		<div class="actions">
-			<ToggleButton bind:checked={isCaseSensitive}>Aa</ToggleButton>
-			<ToggleButton>.*</ToggleButton>
+			<ToggleButton bind:checked={caseSensitive}>Aa</ToggleButton>
+			<ToggleButton bind:checked={regex}>.*</ToggleButton>
 		</div>
 	</div>
-	<div class="row">
-		<input type="text" />
+
+	<div class="text-input">
+		<input type="text" placeholder="Replace" bind:value={replacement} />
+
 		<div class="actions">
-			<ToggleButton bind:checked={isCaseSensitive}>AB</ToggleButton>
+			<ToggleButton bind:checked={preserveCase}>AB</ToggleButton>
 		</div>
 	</div>
+
+	<button on:click={onReplaceAllClick}>Replace All</button>
 </div>
 
 <style>
@@ -25,13 +37,17 @@
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+		padding: 8px;
 	}
 
-	.row {
+	.text-input {
 		position: relative;
 	}
 
 	input {
+		border: none;
+		background: white;
+		padding: 8px;
 		width: 100%;
 	}
 

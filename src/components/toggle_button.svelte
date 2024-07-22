@@ -11,21 +11,35 @@
 
 <style>
 	.toggle-button {
-		background-color: red;
+		cursor: pointer;
 		width: 30px;
 		height: 25px;
 		position: relative;
 	}
 
+	.toggle-button:focus-within {
+		outline: 1px solid green;
+	}
+
 	input {
+		cursor: pointer;
 		position: absolute;
 		inset: 0;
+		margin: 0;
 		opacity: 0;
 		z-index: 2;
 	}
 
+	input:checked + .button {
+		background: blue;
+	}
+
 	.button {
+		background: red;
 		user-select: none;
+		pointer-events: none;
+		width: 100%;
+		height: 100%;
 		z-index: 1;
 	}
 </style>
