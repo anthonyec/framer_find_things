@@ -57,7 +57,7 @@ export async function executeFilters(filters: Filter[], index: SearchIndex) {
 						id: node.id,
 						title: text,
 						node: node,
-						ranges
+						ranges: [...ranges]
 					});
 				}
 

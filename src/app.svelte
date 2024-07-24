@@ -6,23 +6,19 @@
 	import { index, filters, results, textSearchFilter } from './stores/search';
   import { executeFilters } from './search/execute_filters';
   import { indexAll } from './search/index_all';
+  import { replaceAll } from "./search/replace_all"
   import { framer } from "framer-plugin"
   import ResultRow from "./components/result_row.svelte";
 
 	let replacement: string = '';
 	let preserveCase: boolean = false;
 
-  // TODO(anthony): Couldn't get this to work. But neither does a store $results work??
-  // let results: Result[] = []
-
-	const replaceAll = () => {
-		// TODO(anthony): Perform real replace all.
-		console.log('Replace', $textSearchFilter.query, 'with', replacement);
+	const performReplaceAll = () => {
+    replaceAll($results, replacement, preserveCase)
 	};
 
   const focusResult = async (result: Result) => {
     await framer.zoomIntoView(result.id)
-    console.log('wow')
   }
 
   textSearchFilter.subscribe(async () => {
@@ -45,7 +41,7 @@
 	bind:regex={$textSearchFilter.regex}
 	bind:replacement
 	bind:preserveCase
-	onReplaceAllClick={replaceAll}
+	onReplaceAllClick={performReplaceAll}
 />
 
 <!-- TODO(anthony): Why isn't result updating? -->
@@ -59,3 +55,4 @@
     />
   </ResultRow>
 {/each}
+
