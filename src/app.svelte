@@ -31,7 +31,7 @@
     $index = await indexAll()
     $results = await executeFilters($filters, $index)
 
-    console.log("re-index")
+    console.log("re-index", $results)
   })
 </script>
 

@@ -3,6 +3,7 @@ import './framer.css'
 
 import App from './app.svelte'
 import { framer } from "framer-plugin"
+import { mount } from 'svelte'
 
 void framer.showUI({
   title: "Find Things",
@@ -12,7 +13,7 @@ void framer.showUI({
   resizable: true
 })
 
-const app = new App({
+const app = mount(App, {
   target: document.getElementById('app')!,
 })
 
