@@ -12,16 +12,16 @@ export async function indexAll() {
 		newIndex.push(node);
 	}
 
-	const colorStyles = await framer.getColorStyles();
-	const textStyles = await framer.getTextStyles();
+	// const colorStyles = await framer.getColorStyles();
+	// const textStyles = await framer.getTextStyles();
 
-	for (const colorStyle of colorStyles) {
-		newIndex.push(colorStyle);
-	}
+	// for (const colorStyle of colorStyles) {
+	// 	newIndex.push(colorStyle);
+	// }
 
-	for (const textStyle of textStyles) {
-		newIndex.push(textStyle);
-	}
+	// for (const textStyle of textStyles) {
+	// 	newIndex.push(textStyle);
+	// }
 
 	return newIndex;
 }

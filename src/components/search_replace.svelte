@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
+
 	import ToggleButton from './toggle_button.svelte';
 
 	export let query: string;
@@ -9,11 +11,15 @@
 	export let preserveCase: boolean;
 
 	export let onReplaceAllClick: () => void;
+
+	let searchInput: HTMLInputElement
+
+	onMount(() => searchInput.focus())
 </script>
 
 <div class="search-replace">
 	<div class="text-input">
-		<input type="text" placeholder="Search" bind:value={query} />
+		<input type="text" placeholder="Search" bind:this={searchInput} bind:value={query} />
 
 		<div class="actions">
 			<ToggleButton bind:checked={caseSensitive}>Aa</ToggleButton>
@@ -38,6 +44,7 @@
 		flex-direction: column;
 		gap: 8px;
 		padding: 8px;
+		padding-top: 0;
 	}
 
 	.text-input {
@@ -45,9 +52,6 @@
 	}
 
 	input {
-		border: none;
-		background: white;
-		padding: 8px;
 		width: 100%;
 	}
 

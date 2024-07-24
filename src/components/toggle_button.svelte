@@ -21,16 +21,18 @@
 		outline: 1px solid green;
 	}
 
-	input {
+	input[type="checkbox"] {
 		cursor: pointer;
 		position: absolute;
-		inset: 0;
+		border-radius: 0;
+		width: 100%;
+		height: 100%;
 		margin: 0;
 		opacity: 0;
 		z-index: 2;
 	}
 
-	input:checked + .button {
+	input[type="checkbox"]:checked + .button {
 		background: blue;
 	}
 

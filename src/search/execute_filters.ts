@@ -3,7 +3,7 @@ import type { Result, SearchIndex } from './types';
 
 import { isComponentInstanceNode, isFrameNode, isTextNode } from 'framer-plugin';
 import { isTextFilter } from './filters';
-import { isCanvasNode, isColorStyle, isTextStyle } from '../utils/traits';
+import { isCanvasNode } from '../utils/traits';
 import { findRanges } from '../utils/text';
 
 export async function executeFilters(filters: Filter[], index: SearchIndex) {
@@ -61,20 +61,20 @@ export async function executeFilters(filters: Filter[], index: SearchIndex) {
 					});
 				}
 
-				if (isColorStyle(node) || isTextStyle(node)) {
-					const text = node.name;
-					if (!text) continue;
+			// 	if (isColorStyle(node) || isTextStyle(node)) {
+			// 		const text = node.name;
+			// 		if (!text) continue;
 
-					const ranges = findRanges(text, filter.query, filter.caseSensitive, filter.regex);
-					if (!ranges.length) continue;
+			// 		const ranges = findRanges(text, filter.query, filter.caseSensitive, filter.regex);
+			// 		if (!ranges.length) continue;
 
-					results.push({
-						id: node.id,
-						title: text,
-						node: node,
-						ranges
-					});
-				}
+			// 		results.push({
+			// 			id: node.id,
+			// 			title: text,
+			// 			node: node,
+			// 			ranges
+			// 		});
+			// 	}
 			}
 		}
 	}

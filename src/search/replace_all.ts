@@ -2,7 +2,7 @@ import type { Result } from './types';
 
 import { isComponentInstanceNode, isFrameNode, isTextNode } from 'framer-plugin';
 import { replaceAllRanges } from '../utils/text';
-import { isColorStyle, isTextStyle } from '../utils/traits';
+// import { isColorStyle, isTextStyle } from '../utils/traits';
 
 export async function replaceAll(results: Result[], replacement: string, preserveCase: boolean) {
 	for (const result of results) {
@@ -27,7 +27,7 @@ export async function replaceAll(results: Result[], replacement: string, preserv
 			continue;
 		}
 
-		if (isComponentInstanceNode(node) || isColorStyle(node) || isTextStyle(node)) {
+		if (isComponentInstanceNode(node)) { //  || isColorStyle(node) || isTextStyle(node)
 			if (!node.name) continue;
 
 			const replacedText = replaceAllRanges(node.name, replacement, ranges, preserveCase);

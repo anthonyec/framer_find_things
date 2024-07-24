@@ -1,3 +1,5 @@
+// From: https://gist.github.com/anthonyec/ec86c518d9729c1e208a9fdc8e89e8de
+
 export function prepend<T>(array: T[], value: T): T[] {
 	return [value, ...array];
 }
