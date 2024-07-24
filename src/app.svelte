@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import HighlightRange from '../components/highlight_range.svelte';
-	import SearchReplace from '../components/search_replace.svelte';
-	import { filters, textSearchFilter } from '../stores/search';
+	import HighlightRange from './components/highlight_range.svelte';
+	import SearchReplace from './components/search_replace.svelte';
+	import { filters, textSearchFilter } from './stores/search';
 
 	// import { framer } from "framer-plugin"
 
@@ -43,11 +43,3 @@ Debug filters:
 	]}
 	{preserveCase}
 />
-
-<style>
-	:global(body) {
-		background-color: black;
-		color: white;
-		margin: 0;
-	}
-</style>
