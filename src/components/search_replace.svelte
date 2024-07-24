@@ -13,6 +13,7 @@
 	export let onReplaceAllClick: () => void;
 
 	let searchInput: HTMLInputElement
+	let additionalFilters: boolean;
 
 	onMount(() => searchInput.focus())
 </script>
@@ -24,7 +25,12 @@
 		<div class="actions">
 			<ToggleButton bind:checked={caseSensitive}>Aa</ToggleButton>
 			<ToggleButton bind:checked={regex}>.*</ToggleButton>
+			<ToggleButton bind:checked={additionalFilters}>⚙️</ToggleButton>
 		</div>
+
+		{#if additionalFilters}
+			<slot name="additional-filters" />
+		{/if}
 	</div>
 
 	<div class="text-input">
@@ -35,7 +41,7 @@
 		</div>
 	</div>
 
-	<button on:click={onReplaceAllClick}>Replace All</button>
+	<button on:click={onReplaceAllClick} disabled={!replacement}>Replace All</button>
 </div>
 
 <style>

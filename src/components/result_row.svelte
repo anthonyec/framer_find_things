@@ -9,7 +9,9 @@
 
 <style>
   .result-row {
+    background: transparent;
     display: block;
     width: 100%;
+    text-align: left;
   }
 </style>
