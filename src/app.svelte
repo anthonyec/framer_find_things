@@ -38,6 +38,10 @@
   }
 
   $effect(() => {
+    // TODO(anthony): I don't know why I have to reference something inside the
+    // object to trigger effect.
+    textSearchFilter.caseSensitive;
+    textSearchFilter.regex;
     textSearchFilter.query;
     filters;
 

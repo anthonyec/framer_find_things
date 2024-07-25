@@ -93,8 +93,8 @@ export function iterate<T>(array: T[], behaviour: IterationBehaviour = forwards)
 						current: array[index],
 						previous: previous(array, index),
 						next: next(array, index),
-						isStart: index === 0,
-						isEnd: index === array.length - 1
+						isFirst: index === 0,
+						isLast: index === array.length - 1
 					};
 
 					if (index >= 0 && index < array.length) {

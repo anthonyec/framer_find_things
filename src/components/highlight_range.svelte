@@ -18,12 +18,15 @@
 
 	const texts: { text: string; highlighted: boolean }[] = [];
 
-	// TODO(anthony): Fix this, it's missing the start of text if range not at start.
-	for (const { current, next, isEnd } of iterate(ranges)) {
-		texts.push({ text: title.slice(...current), highlighted: true });
+	for (const { current: currentRange, next: nextRange, isFirst: isFirstRange, isLast: isLastRange } of iterate(ranges)) {
+		if (isFirstRange) {
+			texts.push({ text: title.slice(0, currentRange[0]), highlighted: false });
+		}
 
-		if (next) {
-			const inbetween: Range = [current[1], next[0]];
+		texts.push({ text: title.slice(...currentRange), highlighted: true });
+
+		if (nextRange) {
+			const inbetween: Range = [currentRange[1], nextRange[0]];
 
 			const inbetweenLength = inbetween[1] - inbetween[0];
 			if (inbetweenLength === 0) continue;
@@ -31,8 +34,8 @@
 			texts.push({ text: title.slice(inbetween[0], inbetween[1]), highlighted: false });
 		}
 
-		if (isEnd) {
-			texts.push({ text: title.slice(current[1], title.length), highlighted: false });
+		if (isLastRange) {
+			texts.push({ text: title.slice(currentRange[1], title.length), highlighted: false });
 		}
 	}
 
