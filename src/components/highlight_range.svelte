@@ -2,13 +2,23 @@
 	import { iterate } from '../utils/array';
 	import { matchCase, type Range } from '../utils/text';
 
-	export let title: string;
-	export let replacement: string | undefined;
-	export let ranges: Range[];
-	export let preserveCase: boolean;
+	interface Props {
+		title: string;
+		replacement: string | undefined;
+		ranges: Range[];
+		preserveCase: boolean;
+	}
+
+	let {
+		title,
+		replacement,
+		ranges,
+		preserveCase,
+	}: Props = $props()
 
 	const texts: { text: string; highlighted: boolean }[] = [];
 
+	// TODO(anthony): Fix this, it's missing the start of text if range not at start.
 	for (const { current, next, isEnd } of iterate(ranges)) {
 		texts.push({ text: title.slice(...current), highlighted: true });
 
@@ -25,6 +35,8 @@
 			texts.push({ text: title.slice(current[1], title.length), highlighted: false });
 		}
 	}
+
+	$inspect("ranges", ranges)
 </script>
 
 {#each texts as { text, highlighted }}

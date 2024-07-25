@@ -3,19 +3,30 @@
 
 	import ToggleButton from './toggle_button.svelte';
 
-	export let query: string;
-	export let caseSensitive: boolean;
-	export let regex: boolean;
+	interface Props {
+		query: string;
+		caseSensitive: boolean;
+		regex: boolean;
+		replacement: string;
+		preserveCase: boolean;
+		onReplaceAllClick: () => void;
+	}
 
-	export let replacement: string;
-	export let preserveCase: boolean;
-
-	export let onReplaceAllClick: () => void;
+	let {
+		query = $bindable(),
+		caseSensitive = $bindable(),
+		regex = $bindable(),
+		replacement = $bindable(),
+		preserveCase  = $bindable(),
+		onReplaceAllClick
+	}: Props = $props()
 
 	let searchInput: HTMLInputElement
-	let additionalFilters: boolean;
+	let additionalFilters: boolean = $state(false);
 
-	onMount(() => searchInput.focus())
+	$effect(() => {
+		searchInput.focus()
+	})
 </script>
 
 <div class="search-replace">
@@ -67,7 +78,7 @@
 		right: 0;
 		height: 100%;
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: 5px;
 		padding: 0 8px;
 	}

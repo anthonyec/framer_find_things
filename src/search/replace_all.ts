@@ -32,8 +32,6 @@ export async function replaceAll(results: Result[], replacement: string, preserv
 
 			const replacedText = replaceAllRanges(node.name, replacement, ranges, preserveCase);
 
-			console.log('replace', node);
-
 			await node.setAttributes({ name: replacedText });
 			continue;
 		}

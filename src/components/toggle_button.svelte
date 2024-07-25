@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let checked: boolean = false;
+	let {
+		checked = $bindable()
+	}: { checked: boolean } = $props()
 </script>
 
 <div class="toggle-button">

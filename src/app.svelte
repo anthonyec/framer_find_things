@@ -1,23 +1,35 @@
 <script lang="ts">
-  import type { Result } from "./search/types"
+  import type { Result, SearchIndex } from "./search/types"
 
   import HighlightRange from './components/highlight_range.svelte';
 	import SearchReplace from './components/search_replace.svelte';
-	import { index, filters, results, textSearchFilter } from './stores/search';
   import { executeFilters } from './search/execute_filters';
   import { indexAll } from './search/index_all';
   import { replaceAll } from "./search/replace_all"
   import { framer } from "framer-plugin"
   import ResultRow from "./components/result_row.svelte";
   import { pluralize } from "./utils/text";
+  import Filters from "./components/filters.svelte";
+  import type { Filter, TextFilter } from "./search/filters";
 
-	let replacement: string = '';
-	let preserveCase: boolean = false;
+  let searchIndex: SearchIndex = $state([])
+  let textSearchFilter: TextFilter = $state({
+    id: "text-search",
+    type: "text",
+    query: "",
+    caseSensitive: false,
+    regex: false,
+  })
+  let filters: Filter[] = $state([textSearchFilter])
+  let results: Result[] = $state([])
+
+	let replacement: string = $state("");
+	let preserveCase: boolean = $state(false);
 
 	const performReplaceAll = () => {
     if (!replacement) return
 
-    replaceAll($results, replacement, preserveCase)
+    replaceAll(results, replacement, preserveCase)
 	};
 
   const focusResult = async (result: Result) => {
@@ -25,53 +37,54 @@
     await framer.setSelection(result.id)
   }
 
-  textSearchFilter.subscribe(async () => {
-    $results = await executeFilters($filters, $index)
+  $effect(() => {
+    textSearchFilter.query;
+    filters;
+
+    executeFilters(filters, searchIndex).then((newResults) => {
+      results = newResults
+    })
   })
 
-  // TODO(anthony): Should this go in an onmount?
-  // TODO(anthony): Throttle this!
-  framer.subscribeToCanvasRoot(async () => {
-    $index = await indexAll()
-    $results = await executeFilters($filters, $index)
+  $effect(() => {
+    // TODO(anthony): Throttle this!
+    return framer.subscribeToCanvasRoot(async () => {
+      searchIndex = await indexAll()
+      results = await executeFilters(filters, searchIndex)
 
-    console.log("re-index", $results)
+      console.log("re-index", results)
+    })
   })
+
+  $inspect("filters", filters)
+  $inspect("results", results)
 </script>
 
 <div class="app">
   <SearchReplace
-    bind:query={$textSearchFilter.query}
-    bind:caseSensitive={$textSearchFilter.caseSensitive}
-    bind:regex={$textSearchFilter.regex}
+    bind:query={textSearchFilter.query}
+    bind:caseSensitive={textSearchFilter.caseSensitive}
+    bind:regex={textSearchFilter.regex}
     bind:replacement
     bind:preserveCase
     onReplaceAllClick={performReplaceAll}
   >
-    <div slot="additional-filters">
-      {#each $filters as filter}
-        {#if filter.id !== "text-search"}
-          <button>{filter.id}</button>
-        {/if}
-      {/each}
-
-      <button>+</button>
-    </div>
+    <Filters slot="additional-filters" bind:filters={filters} />
   </SearchReplace>
 
   <div class="info">
     <span>
-      {#if $results.length === 0}
+      {#if results.length === 0}
         No results found
       {:else}
-        {$results.length} {pluralize("result", "results", $results.length)}
+        {results.length} {pluralize("result", "results", results.length)}
       {/if}
     </span>
   </div>
 
   <!-- TODO(anthony): Why isn't result updating? -->
   <div class="results">
-    {#each $results as result}
+    {#each results as result (result.title, result.ranges)}
       <ResultRow on:click={() => focusResult(result)}>
         <HighlightRange
           title={result.title}
