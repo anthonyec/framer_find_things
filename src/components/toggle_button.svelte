@@ -1,11 +1,12 @@
 <script lang="ts">
 	let {
-		checked = $bindable()
-	}: { checked: boolean } = $props()
+		checked = $bindable(),
+		label,
+	}: { checked: boolean, label: string } = $props()
 </script>
 
 <div class="toggle-button">
-	<input type="checkbox" bind:checked />
+	<input type="checkbox" bind:checked title={label} />
 	<div class="button">
 		<slot></slot>
 	</div>
@@ -35,11 +36,14 @@
 	}
 
 	input[type="checkbox"]:checked + .button {
-		background: blue;
+		background: red;
 	}
 
 	.button {
-		background: red;
+		background: transparent;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		user-select: none;
 		pointer-events: none;
 		width: 100%;

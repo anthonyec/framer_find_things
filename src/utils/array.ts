@@ -1,13 +1,22 @@
 // From: https://gist.github.com/anthonyec/ec86c518d9729c1e208a9fdc8e89e8de
 
+/**
+ * Return a copy of the array with the element added to the start.
+ */
 export function prepend<T>(array: T[], value: T): T[] {
 	return [value, ...array];
 }
 
+/**
+ * Return a copy of the array the element added to the end.
+ */
 export function append<T>(array: T[], value: T): T[] {
 	return [...array, value];
 }
 
+/**
+ * Return a copy of the array with the element inserted at a specific index.
+ */
 export function insert<T>(array: T[], index: number, value: T): T[] {
 	return [...array.slice(0, index), value, ...array.slice(index, array.length)];
 }
@@ -16,10 +25,27 @@ export function replace<T>(array: T[], index: number, value: T): T[] {
 	return [...array.slice(0, index), value, ...array.slice(index + 1)];
 }
 
-export function remove<T>(array: T[], index: number): T[] {
+/**
+ * Return a copy of the array with the element at a specific index removed.
+ */
+export function removeAt<T>(array: T[], index: number): T[] {
 	return [...array.slice(0, index), ...array.slice(index + 1)];
 }
 
+/**
+ * Return a copy of the array with the specified element removed. Uses strict
+ * equality to find said element.
+ */
+export function remove<T>(array: T[], element: T): T[] {
+	const index = array.findIndex(otherElement => element === otherElement)
+	if (index === -1) return [...array]
+
+	return removeAt(array, index)
+}
+
+/**
+ * Returns the first element of the array.
+ */
 export function first<T>(array: T[]): NonNullable<T> | undefined {
 	const item = array[0];
 	if (item === undefined || item === null) return;
@@ -27,6 +53,9 @@ export function first<T>(array: T[]): NonNullable<T> | undefined {
 	return item;
 }
 
+/**
+ * Returns the last element of the array.
+ */
 export function last<T>(array: T[]): NonNullable<T> | undefined {
 	const item = array[array.length - 1];
 	if (item === undefined || item === null) return;
@@ -34,14 +63,25 @@ export function last<T>(array: T[]): NonNullable<T> | undefined {
 	return item;
 }
 
+/**
+ * Returns a reversed copy of the array.
+ */
 export function reverse<T>(array: T[]): T[] {
 	return [...array].reverse();
 }
 
+/**
+ * Returns a sorted copy of the array.
+ */
 export function sort<T>(array: T[], compare?: (a: T, b: T) => number): T[] {
 	return [...array].sort(compare);
 }
 
+/**
+ * Returns the element before a specific index.
+ *
+ * If the index is out of range, `undefined` is returned.
+ */
 export function previous<T>(array: T[], index: number): NonNullable<T> | undefined {
 	if (index === 0) return;
 
@@ -51,6 +91,11 @@ export function previous<T>(array: T[], index: number): NonNullable<T> | undefin
 	return item;
 }
 
+/**
+ * Returns the element after a specific index.
+ *
+ * If the index is out of range, `undefined` is returned.
+ */
 export function next<T>(array: T[], index: number): NonNullable<T> | undefined {
 	if (index >= array.length - 1) return;
 
@@ -76,6 +121,11 @@ export function skip(every: number): IterationBehaviour {
 
 type IterationBehaviour = (iterations: number, length: number) => number;
 
+/**
+ * Iterator with useful information about the loop built in. These include the
+ * previous, current and next element. And if the iteration is at the start or
+ * end.
+ */
 export function iterate<T>(array: T[], behaviour: IterationBehaviour = forwards) {
 	return {
 		[Symbol.iterator]() {

@@ -34,9 +34,9 @@
 		<input type="text" placeholder="Search" bind:this={searchInput} bind:value={query} />
 
 		<div class="actions">
-			<ToggleButton bind:checked={caseSensitive}>Aa</ToggleButton>
-			<ToggleButton bind:checked={regex}>.*</ToggleButton>
-			<ToggleButton bind:checked={additionalFilters}>⚙️</ToggleButton>
+			<ToggleButton label="Match Case" bind:checked={caseSensitive}>Aa</ToggleButton>
+			<ToggleButton label="Use Regular Expression" bind:checked={regex}>.*</ToggleButton>
+			<ToggleButton label="Use Filters" bind:checked={additionalFilters}>⚙️</ToggleButton>
 		</div>
 
 		{#if additionalFilters}
@@ -48,7 +48,7 @@
 		<input type="text" placeholder="Replace" bind:value={replacement} />
 
 		<div class="actions">
-			<ToggleButton bind:checked={preserveCase}>AB</ToggleButton>
+			<ToggleButton label="Preserve Case" bind:checked={preserveCase}>AB</ToggleButton>
 		</div>
 	</div>
 

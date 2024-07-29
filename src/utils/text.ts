@@ -93,6 +93,13 @@ export function pluralize(singular: string, plural: string, count: number) {
 	return plural;
 }
 
+export function capitalize(text: string) {
+	if (text.length === 0) return text
+
+	const firstCharacter = text.charAt(0)
+	return firstCharacter.toUpperCase() + text.slice(1, text.length)
+}
+
 export function findRanges(
 	text: string,
 	query: string,
@@ -130,4 +137,8 @@ export function findRanges(
 	}
 
 	return ranges;
+}
+
+export function randomID() {
+	return `${Date.now()}-${Math.random()}`
 }

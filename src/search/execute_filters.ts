@@ -67,6 +67,14 @@ async function executeCategoryFilter(filter: CategoryFilter, node: ResultNode): 
 		return isFrameNode(node)
 	}
 
+	if (filter.category === "text") {
+		return isTextNode(node)
+	}
+
+	if (filter.category === "component") {
+		return isComponentInstanceNode(node)
+	}
+
 	return false
 }
 

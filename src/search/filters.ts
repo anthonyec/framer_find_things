@@ -10,9 +10,11 @@ export interface TextFilter extends BaseFilter {
 	regex: boolean;
 }
 
+export const categories = ["all", "frame", "text", "component"] as const
+
 export interface CategoryFilter extends BaseFilter {
 	type: 'category';
-	category: "all" | "frame" | "page" | "color-style" | "text-style"
+	category: (typeof categories)[number]
 }
 
 export type Filter = TextFilter | CategoryFilter;

@@ -1,38 +1,70 @@
 <script lang="ts">
   import type { Filter } from "../search/filters";
+  import * as array from "../utils/array";
+  import * as text from "../utils/text"
   import ConfigureCategoryFilter from "./configure_category_filter.svelte";
 
   let {
     filters = $bindable()
   }: { filters: Filter[] } = $props()
 
-  let openedFilter: Filter | null = $state(null)
+  let currentFilter: Filter | null = $state(null)
+  let filterIdToElement: Record<Filter["id"], HTMLDivElement> = {}
+
+  let anchor: HTMLDivElement | null = $derived.by(() => {
+    console.log("currentFilter")
+    if (currentFilter) return filterIdToElement[currentFilter.id]
+    return null
+  })
 
   const addFilter = () => {
     filters.push({
-      id: "category",
+      id: text.randomID(),
       type: "category",
       category: "all"
     })
   }
 
   const openFilter = (filter: Filter) => {
-    openedFilter = filter
+    currentFilter = filter
   }
+
+  const closeFilter = () => {
+    currentFilter = null
+  }
+
+  const toggleFilter = (filter: Filter) => {
+    // Open modal if not already open or clicking on a different filter.
+    if (!currentFilter || currentFilter.id !== filter.id) {
+      return openFilter(filter)
+    }
+
+    // Close if clicking on the same filter.
+    closeFilter()
+  }
+
+  const removeFilter = (filter: Filter) => {
+    currentFilter = null
+    filters = array.remove(filters, filter)
+  }
+
 </script>
 
 <div class="filters">
   {#each filters as filter}
     {#if filter.type !== "text"}
-      <button class="filter" on:click={() => openFilter(filter)}>{filter.category}</button>
+      <div class="filter" class:open={currentFilter?.id === filter.id}>
+        <button class="filter" onclick={() => toggleFilter(filter)}>{text.capitalize(filter.category)}</button>
+        <button class="delete-button" onclick={() => removeFilter(filter)}>X</button>
+      </div>
     {/if}
   {/each}
 
-  <button class="add-button" on:click={addFilter}>+</button>
+  <button class="add-button" onclick={addFilter}>+</button>
 </div>
 
-{#if openedFilter?.type === "category"}
-  <ConfigureCategoryFilter bind:filter={openedFilter} />
+{#if currentFilter?.type === "category"}
+  <ConfigureCategoryFilter bind:filter={currentFilter} />
 {/if}
 
 <style>
@@ -51,7 +83,16 @@
     width: auto;
   }
 
+  .filter.open {
+    background: red;
+  }
+
   .add-button {
     width: 30px;
+  }
+
+  .delete-button {
+    width: 30px;
+    height: 30px;
   }
 </style>
