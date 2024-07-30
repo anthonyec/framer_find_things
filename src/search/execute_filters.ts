@@ -113,14 +113,10 @@ export async function executeFilters(filters: Filter[], index: SearchIndex) {
 			}
 		}
 
-		// console.log({include, result, node})
-
 		if (include && result) {
 			results.push(result)
 		}
 	}
-
-	// console.log(results)
 
 	return results;
 }

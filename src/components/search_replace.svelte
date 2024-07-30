@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
-
 	import ToggleButton from './toggle_button.svelte';
 
 	interface Props {
@@ -9,7 +7,7 @@
 		regex: boolean;
 		replacement: string;
 		preserveCase: boolean;
-		onReplaceAllClick: () => void;
+		onReplaceAllClick?: () => void;
 	}
 
 	let {
@@ -18,7 +16,7 @@
 		regex = $bindable(),
 		replacement = $bindable(),
 		preserveCase  = $bindable(),
-		onReplaceAllClick
+		onReplaceAllClick = () => {}
 	}: Props = $props()
 
 	let searchInput: HTMLInputElement
