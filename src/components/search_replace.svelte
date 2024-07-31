@@ -1,5 +1,6 @@
 <script lang="ts">
-	import ToggleButton from './toggle_button.svelte';
+	import IconFilter from './icon_filter.svelte';
+import ToggleButton from './toggle_button.svelte';
 
 	interface Props {
 		query: string;
@@ -28,19 +29,26 @@
 </script>
 
 <div class="search-replace">
-	<div class="text-input">
-		<input type="text" placeholder="Search" bind:this={searchInput} bind:value={query} />
+	<div class="text-input-group">
+		<div class="text-input">
+			<input type="text" placeholder="Search" bind:this={searchInput} bind:value={query} />
 
-		<div class="actions">
-			<ToggleButton label="Match Case" bind:checked={caseSensitive}>Aa</ToggleButton>
-			<ToggleButton label="Use Regular Expression" bind:checked={regex}>.*</ToggleButton>
-			<ToggleButton label="Use Filters" bind:checked={additionalFilters}>⚙️</ToggleButton>
+			<div class="actions">
+				<ToggleButton label="Match Case" bind:checked={caseSensitive}>Aa</ToggleButton>
+				<ToggleButton label="Use Regular Expression" bind:checked={regex}>.*</ToggleButton>
+				<ToggleButton label="Use Filters" bind:checked={additionalFilters}>
+					<IconFilter />
+				</ToggleButton>
+			</div>
 		</div>
 
 		{#if additionalFilters}
-			<slot name="additional-filters" />
+			<div onclick={() => searchInput.focus()}>
+				<slot name="additional-filters" />
+			</div>
 		{/if}
 	</div>
+
 
 	<div class="text-input">
 		<input type="text" placeholder="Replace" bind:value={replacement} />
@@ -50,7 +58,7 @@
 		</div>
 	</div>
 
-	<button on:click={onReplaceAllClick} disabled={!replacement}>Replace All</button>
+	<button onclick={onReplaceAllClick} disabled={!replacement}>Replace All</button>
 </div>
 
 <style>
@@ -62,7 +70,25 @@
 		padding-top: 0;
 	}
 
+	.text-input-group {
+		background: var(--framer-color-bg-tertiary);
+		border-radius: 8px;
+	}
+
+	.text-input-group:focus-within {
+		box-shadow: 0 0 0 1px var(--framer-color-tint) inset;
+	}
+
+	.text-input-group:focus-within input {
+		background-color: transparent;
+	}
+
+	.text-input-group:focus-within input:focus {
+		box-shadow: none;
+	}
+
 	.text-input {
+		display: flex;
 		position: relative;
 	}
 
@@ -76,8 +102,8 @@
 		right: 0;
 		height: 100%;
 		display: flex;
-		align-items: flex-start;
-		gap: 5px;
-		padding: 0 8px;
+		align-items: center;
+		gap: 4px;
+		padding-right: 4px;
 	}
 </style>

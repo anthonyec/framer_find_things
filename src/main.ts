@@ -1,7 +1,7 @@
 import './reset.css'
 import './framer.css'
 
-import App from './app2.svelte'
+import App from './app.svelte'
 import { framer } from "framer-plugin"
 import { mount } from 'svelte'
 

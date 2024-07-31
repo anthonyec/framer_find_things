@@ -17,11 +17,11 @@ export function append<T>(array: T[], value: T): T[] {
 /**
  * Return a copy of the array with the element inserted at a specific index.
  */
-export function insert<T>(array: T[], index: number, value: T): T[] {
+export function insertAt<T>(array: T[], index: number, value: T): T[] {
 	return [...array.slice(0, index), value, ...array.slice(index, array.length)];
 }
 
-export function replace<T>(array: T[], index: number, value: T): T[] {
+export function replaceAt<T>(array: T[], index: number, value: T): T[] {
 	return [...array.slice(0, index), value, ...array.slice(index + 1)];
 }
 

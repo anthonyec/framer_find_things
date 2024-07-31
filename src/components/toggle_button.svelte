@@ -15,13 +15,9 @@
 <style>
 	.toggle-button {
 		cursor: pointer;
-		width: 30px;
-		height: 25px;
+		width: 22px;
+		height: 22px;
 		position: relative;
-	}
-
-	.toggle-button:focus-within {
-		outline: 1px solid green;
 	}
 
 	input[type="checkbox"] {
@@ -36,11 +32,18 @@
 	}
 
 	input[type="checkbox"]:checked + .button {
-		background: red;
+		background-color: var(--framer-color-tint-dimmed);
+		color: var(--framer-color-tint);
+	}
+
+	input[type="checkbox"]:focus + .button {
+		box-shadow: 0 0 0 1px var(--framer-color-tint);
 	}
 
 	.button {
 		background: transparent;
+		border-radius: 4px;
+		color: var(--framer-color-text-tertiary);
 		display: flex;
 		align-items: center;
 		justify-content: center;
