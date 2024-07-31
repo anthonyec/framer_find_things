@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { SizeFilter } from "../search/filters";
 
+  import * as text from "../utils/text"
   import { comparatorNames, comparators } from "../search/filters";
   import Popup from "./popup.svelte";
 
@@ -13,7 +14,7 @@
   <div class="form">
     <select bind:value={filter.comparator}>
       {#each comparators as comparator}
-        <option value={comparator}>{comparatorNames[comparator]}</option>
+        <option value={comparator}>{text.capitalize(comparatorNames[comparator])}</option>
       {/each}
     </select>
 

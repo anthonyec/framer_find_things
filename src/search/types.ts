@@ -9,6 +9,8 @@ export interface IndexEntry {
 	name: string;
 	text: string | null;
 	rect: { x: number, y: number, width: number, height: number }
+	hidden: boolean
+	locked: boolean
 }
 
 export interface Result {

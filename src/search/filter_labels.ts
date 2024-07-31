@@ -1,4 +1,4 @@
-import type { CategoryFilter, SizeFilter } from "./filters"
+import type { CategoryFilter, LayerFilter, SizeFilter } from "./filters"
 
 import { comparatorNames } from "./filters";
 
@@ -10,5 +10,24 @@ export function getCategoryFilterLabel(filter: CategoryFilter): string {
 
 export function getSizeFilterLabel(filter: SizeFilter): string {
   const name = comparatorNames[filter.comparator]
-  return `${name} ${filter.width}x${filter.height}`
+
+  if (!filter.width || !filter.height) {
+    if (!filter.height) {
+      return `Width ${name} ${filter.width}`
+    }
+
+    if (!filter.width) {
+      return `Height ${name} ${filter.height}`
+    }
+  }
+
+  return `${text.capitalize(name)} ${filter.width}x${filter.height}`
+}
+
+export function getLayerFilterLabel(filter: LayerFilter): string {
+  if (filter.locked) {
+    return "Locked"
+  }
+
+  return "Unlocked"
 }

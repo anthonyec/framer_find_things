@@ -1,6 +1,6 @@
 interface BaseFilter {
 	id: string;
-	type: 'text' | "category" | "size";
+	type: 'text' | "category" | "size" | "layer";
 }
 
 export interface TextFilter extends BaseFilter {
@@ -22,10 +22,10 @@ export const comparators = [">", "<", "=", "~="] as const
 export type Comparator = (typeof comparators)[number]
 
 export const comparatorNames: Record<Comparator, string> = {
-	"<": "Smaller than",
-	">": "Bigger than",
-	"=": "Exactly is",
-	"~=": "Kinda is"
+	"<": "smaller than",
+	">": "bigger than",
+	"=": "exactly is",
+	"~=": "kinda is"
 }
 
 export interface SizeFilter extends BaseFilter {
@@ -35,7 +35,13 @@ export interface SizeFilter extends BaseFilter {
 	comparator: Comparator;
 }
 
-export type Filter = TextFilter | CategoryFilter | SizeFilter;
+export interface LayerFilter extends BaseFilter {
+	type: "layer"
+	hidden: boolean
+	locked: boolean
+}
+
+export type Filter = TextFilter | CategoryFilter | SizeFilter | LayerFilter;
 
 export function isTextFilter(filter: Filter | undefined): filter is TextFilter {
 	return typeof filter !== 'undefined' && filter.type === 'text';
@@ -47,4 +53,8 @@ export function isCategoryFilter(filter: Filter | undefined): filter is Category
 
 export function isSizeFilter(filter: Filter | undefined): filter is SizeFilter {
 	return typeof filter !== 'undefined' && filter.type === 'size';
+}
+
+export function isLayerFilter(filter: Filter | undefined): filter is LayerFilter {
+	return typeof filter !== 'undefined' && filter.type === 'layer';
 }

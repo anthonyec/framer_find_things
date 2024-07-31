@@ -17,26 +17,32 @@ export async function buildIndex(): Promise<IndexEntry[]> {
     let text: string | null = null
     let name: string | null = null
     let type: IndexNodeType = "unknown"
+    let hidden: boolean = false
+    let locked: boolean = false
 
     if (isFrameNode(node)) {
       name = node.name
       type = "frame"
+      locked = node.locked
     }
 
     if (isTextNode(node)) {
       name = node.name
       text = await node.getText()
       type = "text"
+      locked = node.locked
     }
 
     if (isComponentInstanceNode(node)) {
       name = node.name
       type = "component"
+      locked = node.locked
     }
 
     if (isSVGNode(node)) {
       name = node.name
       type = "svg"
+      locked = node.locked
     }
 
     index.push({
@@ -44,7 +50,9 @@ export async function buildIndex(): Promise<IndexEntry[]> {
       type,
       name: name ?? text ?? "",
       text,
-      rect
+      rect,
+      hidden,
+      locked
     })
 	}
 

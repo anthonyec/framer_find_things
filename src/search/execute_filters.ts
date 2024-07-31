@@ -1,4 +1,4 @@
-import type { CategoryFilter, Filter, SizeFilter, TextFilter } from './filters';
+import type { CategoryFilter, Filter, LayerFilter, SizeFilter, TextFilter } from './filters';
 import type { IndexEntry, Result } from './types';
 
 import { findRanges } from '../utils/text';
@@ -62,6 +62,10 @@ function executeSizeFilter(filter: SizeFilter, entry: IndexEntry): FilterResult 
 	return isWidthMatch && isHeightMatch
 }
 
+function executeLayerFilter(filter: LayerFilter, entry: IndexEntry): FilterResult {
+	return filter.locked === entry.locked
+}
+
 function executeFilter(filter: Filter, entry: IndexEntry): FilterResult {
 	switch(filter.type) {
 		case "text":
@@ -72,6 +76,9 @@ function executeFilter(filter: Filter, entry: IndexEntry): FilterResult {
 
 		case "size":
 			return executeSizeFilter(filter, entry)
+
+		case "layer":
+			return executeLayerFilter(filter, entry)
 
 		default:
 			assertNever(filter)

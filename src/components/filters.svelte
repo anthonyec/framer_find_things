@@ -10,7 +10,8 @@
   import IconPlus from "./icon_plus.svelte";
   import MenuItems from "./menu_items.svelte";
   import Popup from "./popup.svelte";
-  import { getCategoryFilterLabel, getSizeFilterLabel } from "../search/filter_labels";
+  import { getCategoryFilterLabel, getLayerFilterLabel, getSizeFilterLabel } from "../search/filter_labels";
+  import ConfigureLayerFilter from "./configure_layer_filter.svelte";
 
   let {
     filters = $bindable()
@@ -46,7 +47,17 @@
         })
         break
 
+      case "layer":
+        filters.push({
+          id: text.randomID(),
+          type: "layer",
+          hidden: false,
+          locked: false,
+        })
+        break
+
       case "text":
+        // TODO(anthony): Should not be possible, throw an assert!
         break
 
       default:
@@ -100,6 +111,10 @@
           {#if filter.type === "size"}
             {getSizeFilterLabel(filter)}
           {/if}
+
+          {#if filter.type === "layer"}
+            {getLayerFilterLabel(filter)}
+          {/if}
         </FilterChip>
       {/if}
     {/each}
@@ -118,12 +133,17 @@
   <ConfigureSizeFilter bind:filter={currentFilter} />
 {/if}
 
+{#if currentFilter?.type === "layer"}
+  <ConfigureLayerFilter bind:filter={currentFilter} />
+{/if}
+
 {#if isAddMenuOpen}
   <Popup>
     <MenuItems
       items={[
         { id: "category", label: "Category", action: () => addFilter("category") },
-        { id: "size", label: "Size", action: () => addFilter("size") }
+        { id: "size", label: "Size", action: () => addFilter("size") },
+        { id: "layer", label: "Layer", action: () => addFilter("layer") }
       ]}
     />
   </Popup>
