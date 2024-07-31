@@ -1,81 +1,31 @@
 import type { CategoryFilter, Filter, SizeFilter, TextFilter } from './filters';
-import type { Result, ResultNode, SearchIndex } from './types';
+import type { IndexEntry, Result } from './types';
 
-import { isComponentInstanceNode, isFrameNode, isTextNode } from 'framer-plugin';
-import { isCategoryFilter, isTextFilter } from './filters';
-import { isCanvasNode } from '../utils/traits';
 import { findRanges } from '../utils/text';
-import { assert, assertNever } from '../utils/assert';
+import { assertNever } from '../utils/assert';
 
-async function executeTextFilter(filter: TextFilter, node: ResultNode): Promise<Result | boolean> {
-	if (isComponentInstanceNode(node)) {
-		// TODO(anthony): This does not work unless component instance has
-		// been named on the canvas. Which most won't have names.
-		const text = node.name;
-		if (!text) return false;
+type FilterResult = Result | boolean
 
-		const ranges = findRanges(text, filter.query, filter.caseSensitive, filter.regex);
-		if (!ranges.length) return false;
+function executeTextFilter(filter: TextFilter, entry: IndexEntry): FilterResult {
+	const text = entry.text ?? entry.name;
+	if (!text) return false;
 
-		return {
-			id: node.id,
-			title: text,
-			node: node,
-			ranges
-		}
+	const ranges = findRanges(text, filter.query, filter.caseSensitive, filter.regex);
+	if (!ranges.length) return false;
+
+	return {
+		id: entry.id,
+		title: text,
+		ranges
 	}
-
-	if (isFrameNode(node)) {
-		const text = node.name ?? 'Frame';
-		if (!text) return false;
-
-		const ranges = findRanges(text, filter.query, filter.caseSensitive, filter.regex);
-		if (!ranges.length) return false;
-
-		return {
-			id: node.id,
-			title: text,
-			node: node,
-			ranges
-		}
-	}
-
-	if (isTextNode(node)) {
-		const text = await node.getText();
-		if (!text) return false;
-
-		const ranges = findRanges(text, filter.query, filter.caseSensitive, filter.regex);
-		if (!ranges.length) return false;
-
-		return {
-				id: node.id,
-				title: text,
-				node: node,
-				ranges: ranges
-		};
-	}
-
-	return false
 }
 
-async function executeCategoryFilter(filter: CategoryFilter, node: ResultNode): Promise<Result | boolean> {
+function executeCategoryFilter(filter: CategoryFilter, entry: IndexEntry): FilterResult {
 	if (filter.category === "all") {
 		return true
 	}
 
-	if (filter.category === "frame") {
-		return isFrameNode(node)
-	}
-
-	if (filter.category === "text") {
-		return isTextNode(node)
-	}
-
-	if (filter.category === "component") {
-		return isComponentInstanceNode(node)
-	}
-
-	return false
+	return filter.category === entry.type
 }
 
 function isComparatorMatch(a: number, comparator: SizeFilter["comparator"], b: number): boolean {
@@ -93,66 +43,50 @@ function isComparatorMatch(a: number, comparator: SizeFilter["comparator"], b: n
 	}
 }
 
-async function executeSizeFilter(filter: SizeFilter, node: ResultNode): Promise<Result | boolean> {
-	if (isFrameNode(node) || isTextNode(node) || isComponentInstanceNode(node)) {
-		const rect = await node.getRect()
-		if (!rect) return false
+function executeSizeFilter(filter: SizeFilter, entry: IndexEntry): FilterResult {
+	const rect = entry.rect
+	if (!rect) return false
 
-		let matchWidth: boolean = true
-		let matchHeight: boolean = true
+	let isWidthMatch: boolean = true
+	let isHeightMatch: boolean = true
 
-		if (filter.width) {
-			matchWidth = isComparatorMatch(rect.width, filter.comparator, filter.width)
-		}
 
-		if (filter.height) {
-			matchHeight = isComparatorMatch(rect.width, filter.comparator, filter.height)
-		}
-
-		const text = isTextNode(node) ? await node.getText() : null
-
-		if (matchWidth && matchHeight) {
-			return {
-				id: node.id,
-				title: text ?? node.name ?? '', // TODO(anthony): Add function to get layer name.
-				ranges: [],
-				node,
-			}
-		} else {
-			return false
-		}
+	if (filter.width) {
+		isWidthMatch = isComparatorMatch(rect.width, filter.comparator, filter.width)
 	}
 
-	return true
+	if (filter.height) {
+		isHeightMatch = isComparatorMatch(rect.height, filter.comparator, filter.height)
+	}
+
+	return isWidthMatch && isHeightMatch
 }
 
-function executeFilter(filter: Filter, node: ResultNode): Promise<Result | boolean> {
+function executeFilter(filter: Filter, entry: IndexEntry): FilterResult {
 	switch(filter.type) {
 		case "text":
-			return executeTextFilter(filter, node)
+			return executeTextFilter(filter, entry)
 
 		case "category":
-			return executeCategoryFilter(filter, node)
+			return executeCategoryFilter(filter, entry)
 
 		case "size":
-			return executeSizeFilter(filter, node)
+			return executeSizeFilter(filter, entry)
 
 		default:
 			assertNever(filter)
 	}
 }
 
-export async function executeFilters(filters: Filter[], index: SearchIndex) {
+export function executeFilters(filters: Filter[], index: IndexEntry[]) {
 	const results: Result[] = [];
 
-	for (const node of index) {
-		if (isCanvasNode(node) && node.isReplica) continue;
-
+	for (const entry of index) {
 		let include: boolean = true
 		let result: Result | undefined
 
 		for (const filter of filters) {
-			const filterResult = await executeFilter(filter, node)
+			const filterResult =  executeFilter(filter, entry)
 
 			if (typeof filterResult !== "boolean") {
 				result = filterResult

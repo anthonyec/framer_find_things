@@ -1,18 +1,18 @@
 <script lang="ts">
-  import type { Result, SearchIndex } from "./search/types"
+  import type { IndexEntry, Result } from "./search/types"
+  import type { Filter, TextFilter } from "./search/filters";
 
   import HighlightRange from './components/highlight_range.svelte';
 	import SearchReplace from './components/search_replace.svelte';
   import { executeFilters } from './search/execute_filters';
-  import { indexAll } from './search/index_all';
   import { replaceAll } from "./search/replace_all"
   import { framer } from "framer-plugin"
   import ResultRow from "./components/result_row.svelte";
   import { pluralize } from "./utils/text";
   import Filters from "./components/filters.svelte";
-  import type { Filter, TextFilter } from "./search/filters";
+  import { buildIndex } from "./search/build_index";
 
-  let searchIndex: SearchIndex = $state([])
+  let index: IndexEntry[] = $state([])
   let textSearchFilter: TextFilter = $state({
     id: "text-search",
     type: "text",
@@ -21,7 +21,7 @@
     regex: false,
   })
   let filters: Filter[] = $state([textSearchFilter])
-  let results: Result[] = $state([])
+  let results: Result[] = $derived(executeFilters(filters, index))
 
 	let replacement: string = $state("");
 	let preserveCase: boolean = $state(false);
@@ -38,24 +38,12 @@
   }
 
   $effect(() => {
-    executeFilters(filters, searchIndex).then((newResults) => {
-      results = newResults
-    })
-  })
-
-  $effect(() => {
     // TODO(anthony): Throttle this!
     return framer.subscribeToCanvasRoot(async () => {
-      searchIndex = await indexAll()
-      results = await executeFilters(filters, searchIndex)
-
+      index = await buildIndex()
       console.log("re-index", results)
     })
   })
-
-  // $inspect("filters", filters)
-  // $inspect("results", results)
-  $inspect("results", results).with(console.trace);
 </script>
 
 <div class="app">

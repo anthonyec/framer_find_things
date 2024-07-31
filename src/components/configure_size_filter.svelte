@@ -18,7 +18,7 @@
 
 <Popup title="Size">
   <div class="form">
-    <select>
+    <select bind:value={filter.comparator}>
       {#each comparators as comparator}
         <option value={comparator}>{comparatorNames[comparator]}</option>
       {/each}
