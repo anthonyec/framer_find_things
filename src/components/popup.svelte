@@ -14,7 +14,7 @@
 
 <style>
   .popup {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
     background: var(--framer-color-bg);
     border-radius: 8px;
     position: absolute;

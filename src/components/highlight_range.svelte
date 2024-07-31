@@ -38,8 +38,6 @@
 			texts.push({ text: title.slice(currentRange[1], title.length), highlighted: false });
 		}
 	}
-
-	$inspect("ranges", ranges)
 </script>
 
 {#each texts as { text, highlighted }}

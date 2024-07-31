@@ -53,8 +53,9 @@
     })
   })
 
-  $inspect("filters", filters)
-  $inspect("results", results)
+  // $inspect("filters", filters)
+  // $inspect("results", results)
+  $inspect("results", results).with(console.trace);
 </script>
 
 <div class="app">
