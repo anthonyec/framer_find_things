@@ -21,6 +21,13 @@ export const comparators = [">", "<", "=", "~="] as const
 
 export type Comparator = (typeof comparators)[number]
 
+export const comparatorNames: Record<Comparator, string> = {
+	"<": "Smaller than",
+	">": "Bigger than",
+	"=": "Exactly is",
+	"~=": "Kinda is"
+}
+
 export interface SizeFilter extends BaseFilter {
 	type: "size";
 	width: number | undefined;

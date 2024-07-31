@@ -1,14 +1,16 @@
 <script lang="ts">
   import type { Filter } from "../search/filters";
+
   import * as array from "../utils/array";
-  import { assertNever } from "../utils/assert";
   import * as text from "../utils/text"
+  import { assertNever } from "../utils/assert";
   import ConfigureCategoryFilter from "./configure_category_filter.svelte";
   import ConfigureSizeFilter from "./configure_size_filter.svelte";
-  import IconClose from "./icon_close.svelte";
+  import FilterChip from "./filter_chip.svelte";
   import IconPlus from "./icon_plus.svelte";
   import MenuItems from "./menu_items.svelte";
   import Popup from "./popup.svelte";
+  import { getCategoryFilterLabel, getSizeFilterLabel } from "../search/filter_labels";
 
   let {
     filters = $bindable()
@@ -89,18 +91,16 @@
 <div class="filters-container">
   <div class="filters">
     {#each filters as filter}
-      {#if filter.type === "category"}
-        <div class="filter" class:open={currentFilter?.id === filter.id}>
-          <button class="open-button" onmousedown={() => toggleFilter(filter)}>{text.capitalize(filter.category)}</button>
-          <button class="delete-button" onclick={() => removeFilter(filter)}><IconClose /></button>
-        </div>
-      {/if}
+      {#if filter.type !== "text"}
+        <FilterChip open={filter.id === currentFilter?.id} onClick={() => toggleFilter(filter)} onRemoveClick={() => removeFilter(filter)}>
+          {#if filter.type === "category"}
+            {getCategoryFilterLabel(filter)}
+          {/if}
 
-      {#if filter.type === "size"}
-        <div class="filter" class:open={currentFilter?.id === filter.id}>
-          <button class="open-button" onmousedown={() => toggleFilter(filter)}>{(filter.width ?? 0) + "x" + (filter.height ?? 0)}</button>
-          <button class="delete-button" onclick={() => removeFilter(filter)}><IconClose /></button>
-        </div>
+          {#if filter.type === "size"}
+            {getSizeFilterLabel(filter)}
+          {/if}
+        </FilterChip>
       {/if}
     {/each}
   </div>

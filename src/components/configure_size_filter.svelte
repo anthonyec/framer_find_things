@@ -1,19 +1,12 @@
 <script lang="ts">
-  import type { Comparator, SizeFilter } from "../search/filters";
+  import type { SizeFilter } from "../search/filters";
 
-  import { comparators } from "../search/filters";
+  import { comparatorNames, comparators } from "../search/filters";
   import Popup from "./popup.svelte";
 
   let {
     filter = $bindable(),
   }: { filter: SizeFilter } = $props()
-
-  const comparatorNames: Record<Comparator, string> = {
-    "<": "Smaller than",
-    ">": "Bigger than",
-    "=": "Exactly is",
-    "~=": "Kinda is"
-  }
 </script>
 
 <Popup title="Size">
