@@ -43,7 +43,7 @@ import ToggleButton from './toggle_button.svelte';
 		</div>
 
 		{#if additionalFilters}
-			<div onclick={() => searchInput.focus()}>
+			<div>
 				<slot name="additional-filters" />
 			</div>
 		{/if}

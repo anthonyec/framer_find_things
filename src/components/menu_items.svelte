@@ -1,0 +1,54 @@
+<script lang="ts">
+  import IconCheckmark from "./icon_checkmark.svelte";
+
+  interface Props {
+    items: { id: string, label: string, selected?: boolean, action?: () => void }[]
+  }
+
+  let { items }: Props = $props()
+
+  const showCheckmarks = items.some(item => typeof item.selected === "boolean")
+</script>
+
+<div class="menu-items">
+  {#each items as item}
+    <button onmouseup={() => item.action?.()}>
+      {#if showCheckmarks}
+        <div class="checkmark">
+          {#if item.selected}
+            <IconCheckmark />
+          {/if}
+        </div>
+      {/if}
+
+      {item.label}
+    </button>
+  {/each}
+</div>
+
+<style>
+  .menu-items {
+    padding: 5px;
+  }
+
+  button {
+    background: transparent;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: none;
+    height: 26px;
+    gap: 8px;
+    padding-right: 16px;
+  }
+
+  button:hover {
+    background: var(--framer-color-tint);
+    color: var(--framer-color-text-reversed)
+  }
+
+  .checkmark {
+    width: 12px;
+    transform: translateY(1px);
+  }
+</style>

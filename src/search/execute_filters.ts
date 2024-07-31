@@ -1,4 +1,4 @@
-import type { CategoryFilter, Filter, TextFilter } from './filters';
+import type { CategoryFilter, Filter, SizeFilter, TextFilter } from './filters';
 import type { Result, ResultNode, SearchIndex } from './types';
 
 import { isComponentInstanceNode, isFrameNode, isTextNode } from 'framer-plugin';
@@ -78,6 +78,54 @@ async function executeCategoryFilter(filter: CategoryFilter, node: ResultNode): 
 	return false
 }
 
+function isComparatorMatch(a: number, comparator: SizeFilter["comparator"], b: number): boolean {
+	switch(comparator) {
+		case "<":
+			return a < b
+		case ">":
+			return a > b
+		case "=":
+			return a === b
+		case "~=":
+			return b > (a - 10) && b < (a + 10)
+		default:
+			assertNever(comparator)
+	}
+}
+
+async function executeSizeFilter(filter: SizeFilter, node: ResultNode): Promise<Result | boolean> {
+	if (isFrameNode(node) || isTextNode(node) || isComponentInstanceNode(node)) {
+		const rect = await node.getRect()
+		if (!rect) return false
+
+		let matchWidth: boolean = true
+		let matchHeight: boolean = true
+
+		if (filter.width) {
+			matchWidth = isComparatorMatch(rect.width, filter.comparator, filter.width)
+		}
+
+		if (filter.height) {
+			matchHeight = isComparatorMatch(rect.width, filter.comparator, filter.height)
+		}
+
+		const text = isTextNode(node) ? await node.getText() : null
+
+		if (matchWidth && matchHeight) {
+			return {
+				id: node.id,
+				title: text ?? node.name ?? '', // TODO(anthony): Add function to get layer name.
+				ranges: [],
+				node,
+			}
+		} else {
+			return false
+		}
+	}
+
+	return true
+}
+
 function executeFilter(filter: Filter, node: ResultNode): Promise<Result | boolean> {
 	switch(filter.type) {
 		case "text":
@@ -85,6 +133,9 @@ function executeFilter(filter: Filter, node: ResultNode): Promise<Result | boole
 
 		case "category":
 			return executeCategoryFilter(filter, node)
+
+		case "size":
+			return executeSizeFilter(filter, node)
 
 		default:
 			assertNever(filter)

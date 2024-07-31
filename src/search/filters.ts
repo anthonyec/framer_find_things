@@ -1,6 +1,6 @@
 interface BaseFilter {
 	id: string;
-	type: 'text' | "category";
+	type: 'text' | "category" | "size";
 }
 
 export interface TextFilter extends BaseFilter {
@@ -14,10 +14,21 @@ export const categories = ["all", "frame", "text", "component"] as const
 
 export interface CategoryFilter extends BaseFilter {
 	type: 'category';
-	category: (typeof categories)[number]
+	category: (typeof categories)[number];
 }
 
-export type Filter = TextFilter | CategoryFilter;
+export const comparators = [">", "<", "=", "~="] as const
+
+export type Comparator = (typeof comparators)[number]
+
+export interface SizeFilter extends BaseFilter {
+	type: "size";
+	width: number | undefined;
+	height: number | undefined;
+	comparator: Comparator;
+}
+
+export type Filter = TextFilter | CategoryFilter | SizeFilter;
 
 export function isTextFilter(filter: Filter | undefined): filter is TextFilter {
 	return typeof filter !== 'undefined' && filter.type === 'text';
@@ -25,4 +36,8 @@ export function isTextFilter(filter: Filter | undefined): filter is TextFilter {
 
 export function isCategoryFilter(filter: Filter | undefined): filter is CategoryFilter {
 	return typeof filter !== 'undefined' && filter.type === 'category';
+}
+
+export function isSizeFilter(filter: Filter | undefined): filter is SizeFilter {
+	return typeof filter !== 'undefined' && filter.type === 'size';
 }

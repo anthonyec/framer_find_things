@@ -1,34 +1,67 @@
 <script lang="ts">
   import type { Filter } from "../search/filters";
   import * as array from "../utils/array";
+  import { assertNever } from "../utils/assert";
   import * as text from "../utils/text"
   import ConfigureCategoryFilter from "./configure_category_filter.svelte";
+  import ConfigureSizeFilter from "./configure_size_filter.svelte";
   import IconClose from "./icon_close.svelte";
   import IconPlus from "./icon_plus.svelte";
+  import MenuItems from "./menu_items.svelte";
+  import Popup from "./popup.svelte";
 
   let {
     filters = $bindable()
   }: { filters: Filter[] } = $props()
 
   let currentFilter: Filter | null = $state(null)
+  let isAddMenuOpen: boolean = $state(false)
+
   let filterIdToElement: Record<Filter["id"], HTMLDivElement> = {}
 
   let anchor: HTMLDivElement | null = $derived.by(() => {
-    console.log("currentFilter")
     if (currentFilter) return filterIdToElement[currentFilter.id]
     return null
   })
 
-  const addFilter = () => {
-    filters.push({
-      id: text.randomID(),
-      type: "category",
-      category: "all"
-    })
+  const addFilter = (type: Filter["type"]) => {
+    switch(type) {
+      case "category":
+        filters.push({
+          id: text.randomID(),
+          type: "category",
+          category: "all"
+        })
+        break
+
+      case "size":
+        filters.push({
+          id: text.randomID(),
+          type: "size",
+          comparator: ">",
+          width: 300,
+          height: 200,
+        })
+        break
+
+      case "text":
+        break
+
+      default:
+        assertNever(type)
+    }
+
+    isAddMenuOpen = false
+  }
+
+  const openAddMenu = () => {
+    isAddMenuOpen = true
+    currentFilter = null
   }
 
   const openFilter = (filter: Filter) => {
     currentFilter = filter
+    isAddMenuOpen = false
   }
 
   const closeFilter = () => {
@@ -47,6 +80,8 @@
 
   const removeFilter = (filter: Filter) => {
     currentFilter = null
+    isAddMenuOpen = false
+
     filters = array.remove(filters, filter)
   }
 </script>
@@ -54,22 +89,44 @@
 <div class="filters-container">
   <div class="filters">
     {#each filters as filter}
-      {#if filter.type !== "text"}
+      {#if filter.type === "category"}
         <div class="filter" class:open={currentFilter?.id === filter.id}>
-          <button class="open-button" onclick={() => toggleFilter(filter)}>{text.capitalize(filter.category)}</button>
+          <button class="open-button" onmousedown={() => toggleFilter(filter)}>{text.capitalize(filter.category)}</button>
+          <button class="delete-button" onclick={() => removeFilter(filter)}><IconClose /></button>
+        </div>
+      {/if}
+
+      {#if filter.type === "size"}
+        <div class="filter" class:open={currentFilter?.id === filter.id}>
+          <button class="open-button" onmousedown={() => toggleFilter(filter)}>{(filter.width ?? 0) + "x" + (filter.height ?? 0)}</button>
           <button class="delete-button" onclick={() => removeFilter(filter)}><IconClose /></button>
         </div>
       {/if}
     {/each}
   </div>
 
-  <button class="add-button" onclick={addFilter}>
+  <button class="add-button" onmousedown={openAddMenu}>
     <IconPlus />
   </button>
 </div>
 
 {#if currentFilter?.type === "category"}
   <ConfigureCategoryFilter bind:filter={currentFilter} />
+{/if}
+
+{#if currentFilter?.type === "size"}
+  <ConfigureSizeFilter bind:filter={currentFilter} />
+{/if}
+
+{#if isAddMenuOpen}
+  <Popup>
+    <MenuItems
+      items={[
+        { id: "category", label: "Category", action: () => addFilter("category") },
+        { id: "size", label: "Size", action: () => addFilter("size") }
+      ]}
+    />
+  </Popup>
 {/if}
 
 <style>
