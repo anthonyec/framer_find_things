@@ -5,6 +5,7 @@
   import * as text from "../utils/text"
   import Popup from "./popup.svelte";
   import MenuItems from "./menu_items.svelte";
+  import { replaceAll } from "../search/replace_all";
 
   let {
     filter = $bindable(),
@@ -22,7 +23,7 @@
     items={categories.map((category) => {
       return {
         id: category,
-        label: text.capitalize(category),
+        label: text.capitalize(category).replaceAll("-", " "),
         selected: filter.category === category,
         action: () => selectCategory(category)
       }

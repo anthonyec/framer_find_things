@@ -29,6 +29,7 @@
 <style>
   .menu-items {
     padding: 5px;
+    user-select: none;
   }
 
   button {

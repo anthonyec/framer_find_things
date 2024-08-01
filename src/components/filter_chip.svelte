@@ -2,19 +2,21 @@
   import IconClose from "./icon_close.svelte";
 
   interface Props {
+    id: string
     open: Boolean
     onClick: () => void
     onRemoveClick: () => void
   }
 
   let {
+    id,
     open,
     onClick,
     onRemoveClick
   }: Props = $props()
 </script>
 
-<div class="filter" class:open={open}>
+<div id={id} class="filter" class:open={open}>
   <button class="open-button" onmousedown={() => onClick()}><slot /></button>
   <button class="delete-button" onclick={() => onRemoveClick()}><IconClose /></button>
 </div>

@@ -1,10 +1,22 @@
 <script lang="ts">
   let {
-    title
-  }: { title?: string } = $props()
+    title,
+    target,
+  }: { title?: string, target?: HTMLElement | undefined } = $props()
+
+  let position: { x: number, y: number } = $state({ x: 50, y: 50 })
+
+  $effect(() => {
+    if (!target) return
+
+    console.log(target)
+
+    const { x, y } = target.getBoundingClientRect()
+    position = { x, y }
+  })
 </script>
 
-<modal class="popup" open>
+<modal class="popup" open style:left={position.x} style:top={position.y}>
   <!-- {#if title}
     <h2>{title}</h2>
   {/if} -->

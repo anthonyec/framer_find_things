@@ -12,6 +12,7 @@
   import Popup from "./popup.svelte";
   import { getCategoryFilterLabel, getLayerFilterLabel, getSizeFilterLabel } from "../search/filter_labels";
   import ConfigureLayerFilter from "./configure_layer_filter.svelte";
+  import type { SvelteComponent } from "svelte";
 
   let {
     filters = $bindable()
@@ -20,40 +21,47 @@
   let currentFilter: Filter | null = $state(null)
   let isAddMenuOpen: boolean = $state(false)
 
-  let filterIdToElement: Record<Filter["id"], HTMLDivElement> = {}
+  let addButtonElement = $state<HTMLElement>()
+  let chipElements = $state<Record<Filter["id"], HTMLDivElement>>({})
 
-  let anchor: HTMLDivElement | null = $derived.by(() => {
-    if (currentFilter) return filterIdToElement[currentFilter.id]
-    return null
-  })
+  // let anchor: HTMLDivElement | null = $derived.by(() => {
+  //   if (currentFilter) return filterIdToElement[currentFilter.id]
+  //   return null
+  // })
+
+  $inspect("chipElements", chipElements)
 
   const addFilter = (type: Filter["type"]) => {
+    const id = text.randomID()
+
+    let filter: Filter | undefined
+
     switch(type) {
       case "category":
-        filters.push({
-          id: text.randomID(),
+        filter = {
+          id,
           type: "category",
           category: "all"
-        })
+        }
         break
 
       case "size":
-        filters.push({
-          id: text.randomID(),
+        filter = {
+          id,
           type: "size",
           comparator: ">",
           width: 300,
           height: 200,
-        })
+        }
         break
 
       case "layer":
-        filters.push({
-          id: text.randomID(),
+        filter = {
+          id,
           type: "layer",
           hidden: false,
           locked: false,
-        })
+        }
         break
 
       case "text":
@@ -64,7 +72,12 @@
         assertNever(type)
     }
 
+    if (!filter) return
+
+    filters.push(filter)
+
     isAddMenuOpen = false
+    currentFilter = filter
   }
 
   const openAddMenu = () => {
@@ -81,13 +94,15 @@
     currentFilter = null
   }
 
+  /**
+   * Open modal if not already open or clicking on a different filter. Close if
+   * clicking on the same filter.
+   * */
   const toggleFilter = (filter: Filter) => {
-    // Open modal if not already open or clicking on a different filter.
     if (!currentFilter || currentFilter.id !== filter.id) {
       return openFilter(filter)
     }
 
-    // Close if clicking on the same filter.
     closeFilter()
   }
 
@@ -103,7 +118,7 @@
   <div class="filters">
     {#each filters as filter}
       {#if filter.type !== "text"}
-        <FilterChip open={filter.id === currentFilter?.id} onClick={() => toggleFilter(filter)} onRemoveClick={() => removeFilter(filter)}>
+        <FilterChip id={filter.id} open={filter.id === currentFilter?.id} onClick={() => toggleFilter(filter)} onRemoveClick={() => removeFilter(filter)}>
           {#if filter.type === "category"}
             {getCategoryFilterLabel(filter)}
           {/if}
@@ -120,7 +135,7 @@
     {/each}
   </div>
 
-  <button class="add-button" onmousedown={openAddMenu}>
+  <button id="add-button" class="add-button" onmousedown={openAddMenu}>
     <IconPlus />
   </button>
 </div>
@@ -138,7 +153,7 @@
 {/if}
 
 {#if isAddMenuOpen}
-  <Popup>
+  <Popup target={addButtonElement}>
     <MenuItems
       items={[
         { id: "category", label: "Category", action: () => addFilter("category") },
@@ -177,51 +192,11 @@
     gap: 8px;
   }
 
-  .filter {
-    border-radius: 4px;
-    background: var(--framer-color-bg);
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);
-    display: flex;
-    height: 23px;
-    flex-shrink: 0;
-    align-content: center;
-    width: auto;
-    overflow: hidden;
-  }
-
-  .filter.open {
-    background: var(--framer-color-tint-dimmed);
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 0 0 1px var(--framer-color-tint);
-  }
-
-  :global([data-framer-theme="dark"]) .filter {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  :global([data-framer-theme="dark"]) .filter.open {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .open-button {
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    padding-right: 1px;
-  }
-
   .add-button {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 24px;
     height: 23px;
-  }
-
-  .delete-button {
-    color: var(--framer-color-text-tertiary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
   }
 </style>

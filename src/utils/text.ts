@@ -140,5 +140,5 @@ export function findRanges(
 }
 
 export function randomID() {
-	return `${Date.now()}-${Math.random()}`
+	return `${Date.now()}-${Math.floor(Math.random() * 100)}`
 }

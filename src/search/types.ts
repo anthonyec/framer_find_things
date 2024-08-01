@@ -1,14 +1,14 @@
-import type { CanvasNode, ColorStyle, TextStyle } from 'framer-plugin';
 import type { Range } from '../utils/text';
 
-export type IndexNodeType = "unknown" | "frame" | "text" | "component" | "svg"
+export type IndexNodeType = "unknown" | "frame" | "text" | "component" | "svg" | "color-style" | "text-style"
 
 export interface IndexEntry {
 	id: string;
 	type: IndexNodeType
 	name: string;
 	text: string | null;
-	rect: { x: number, y: number, width: number, height: number }
+	rect: { x: number, y: number, width: number, height: number } | null
+	colors: string[]
 	hidden: boolean
 	locked: boolean
 }

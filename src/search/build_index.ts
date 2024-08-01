@@ -1,7 +1,30 @@
-import { isCanvasNode } from '../utils/traits';
 import type { IndexEntry, IndexNodeType } from './types';
+import type { TextStyleTag } from "framer-plugin"
 
+import { isCanvasNode } from '../utils/traits';
 import { framer, isComponentInstanceNode, isFrameNode, isSVGNode, isTextNode, } from 'framer-plugin';
+import { assertNever } from '../utils/assert';
+
+function getTextStyleTagName(tag: TextStyleTag): string {
+  switch (tag) {
+    case "h1":
+      return "Heading 1"
+    case "h2":
+      return "Heading 2"
+    case "h3":
+      return "Heading 3"
+    case "h4":
+      return "Heading 4"
+    case "h5":
+      return "Heading 5"
+    case "h6":
+      return "Heading 6"
+    case "p":
+      return "Body"
+    default:
+      assertNever(tag)
+  }
+}
 
 export async function buildIndex(): Promise<IndexEntry[]> {
 	const root = await framer.getCanvasRoot();
@@ -51,10 +74,40 @@ export async function buildIndex(): Promise<IndexEntry[]> {
       name: name ?? text ?? "",
       text,
       rect,
+      color: null,
       hidden,
       locked
     })
 	}
+
+  const colorStyles = await framer.getColorStyles()
+  const textStyles = await framer.getTextStyles()
+
+  for (const colorStyle of colorStyles) {
+    index.push({
+      id: colorStyle.id,
+      type: "color-style",
+      name: colorStyle.name,
+      text: null,
+      rect: null,
+      color: colorStyle.light,
+      hidden: false,
+      locked: false
+    })
+  }
+
+  for (const textStyle of textStyles) {
+    index.push({
+      id: textStyle.id,
+      type: "text-style",
+      name: textStyle.name || getTextStyleTagName(textStyle.tag),
+      text: null,
+      rect: null,
+      color: textStyle.color,
+      hidden: false,
+      locked: false
+    })
+  }
 
 	return index;
 }

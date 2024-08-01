@@ -10,7 +10,7 @@ export interface TextFilter extends BaseFilter {
 	regex: boolean;
 }
 
-export const categories = ["all", "frame", "text", "component"] as const
+export const categories = ["all", "frame", "text", "component", "color-style", "text-style"] as const
 
 export interface CategoryFilter extends BaseFilter {
 	type: 'category';
