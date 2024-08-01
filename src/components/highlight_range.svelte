@@ -51,7 +51,7 @@
 
 <style>
 	.highlighted {
-		background: red;
+		background: color-mix(in srgb, transparent, var(--framer-color-tint) 30%);
 		border-radius: 3px;
 	}
 

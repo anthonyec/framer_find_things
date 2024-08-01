@@ -3,6 +3,7 @@
 
   import * as array from "../utils/array";
   import * as text from "../utils/text"
+  import * as color from "../utils/color"
   import { assertNever } from "../utils/assert";
   import ConfigureCategoryFilter from "./configure_category_filter.svelte";
   import ConfigureSizeFilter from "./configure_size_filter.svelte";
@@ -10,9 +11,9 @@
   import IconPlus from "./icon_plus.svelte";
   import MenuItems from "./menu_items.svelte";
   import Popup from "./popup.svelte";
-  import { getCategoryFilterLabel, getLayerFilterLabel, getSizeFilterLabel } from "../search/filter_labels";
+  import { getCategoryFilterLabel, getColorFilterLabel, getLayerFilterLabel, getSizeFilterLabel } from "../search/filter_labels";
   import ConfigureLayerFilter from "./configure_layer_filter.svelte";
-  import type { SvelteComponent } from "svelte";
+  import ConfigureColorFilter from "./configure_color_filter.svelte";
 
   let {
     filters = $bindable()
@@ -61,6 +62,15 @@
           type: "layer",
           hidden: false,
           locked: false,
+        }
+        break
+
+      case "color":
+        filter = {
+          id,
+          type: "color",
+          color: color.createColorRGBA(242, 59, 57, 1),
+          distance: 50
         }
         break
 
@@ -130,6 +140,10 @@
           {#if filter.type === "layer"}
             {getLayerFilterLabel(filter)}
           {/if}
+
+          {#if filter.type === "color"}
+            {getColorFilterLabel(filter)}
+          {/if}
         </FilterChip>
       {/if}
     {/each}
@@ -152,13 +166,18 @@
   <ConfigureLayerFilter bind:filter={currentFilter} />
 {/if}
 
+{#if currentFilter?.type === "color"}
+  <ConfigureColorFilter bind:filter={currentFilter} />
+{/if}
+
 {#if isAddMenuOpen}
   <Popup target={addButtonElement}>
     <MenuItems
       items={[
         { id: "category", label: "Category", action: () => addFilter("category") },
         { id: "size", label: "Size", action: () => addFilter("size") },
-        { id: "layer", label: "Layer", action: () => addFilter("layer") }
+        { id: "layer", label: "Layer", action: () => addFilter("layer") },
+        { id: "color", label: "Color", action: () => addFilter("color") },
       ]}
     />
   </Popup>

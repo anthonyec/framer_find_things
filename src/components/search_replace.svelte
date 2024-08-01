@@ -50,7 +50,7 @@ import ToggleButton from './toggle_button.svelte';
 	</div>
 
 
-	<div class="text-input">
+	<!-- <div class="text-input">
 		<input type="text" placeholder="Replace" bind:value={replacement} />
 
 		<div class="actions">
@@ -58,7 +58,7 @@ import ToggleButton from './toggle_button.svelte';
 		</div>
 	</div>
 
-	<button onclick={onReplaceAllClick} disabled={!replacement}>Replace All</button>
+	<button class="framer-button-primary" onclick={onReplaceAllClick} disabled={!replacement}>Replace All</button> -->
 </div>
 
 <style>

@@ -1,9 +1,10 @@
-import type { IndexEntry, IndexNodeType } from './types';
+import type { Color, IndexEntry, IndexNodeType } from './types';
 import type { TextStyleTag } from "framer-plugin"
 
 import { isCanvasNode } from '../utils/traits';
 import { framer, isComponentInstanceNode, isFrameNode, isSVGNode, isTextNode, } from 'framer-plugin';
 import { assertNever } from '../utils/assert';
+import * as color from "../utils/color"
 
 function getTextStyleTagName(tag: TextStyleTag): string {
   switch (tag) {
@@ -42,6 +43,7 @@ export async function buildIndex(): Promise<IndexEntry[]> {
     let type: IndexNodeType = "unknown"
     let hidden: boolean = false
     let locked: boolean = false
+    const colors: Color[] = []
 
     if (isFrameNode(node)) {
       name = node.name
@@ -74,7 +76,7 @@ export async function buildIndex(): Promise<IndexEntry[]> {
       name: name ?? text ?? "",
       text,
       rect,
-      color: null,
+      colors,
       hidden,
       locked
     })
@@ -90,7 +92,7 @@ export async function buildIndex(): Promise<IndexEntry[]> {
       name: colorStyle.name,
       text: null,
       rect: null,
-      color: colorStyle.light,
+      colors: [color.parseColorRGBA(colorStyle.light)], // TODO(anthony): Add dark color here.
       hidden: false,
       locked: false
     })
@@ -103,7 +105,7 @@ export async function buildIndex(): Promise<IndexEntry[]> {
       name: textStyle.name || getTextStyleTagName(textStyle.tag),
       text: null,
       rect: null,
-      color: textStyle.color,
+      colors: [color.parseColorRGBA(textStyle.color)],
       hidden: false,
       locked: false
     })

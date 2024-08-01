@@ -1,8 +1,9 @@
-import type { CategoryFilter, Filter, LayerFilter, SizeFilter, TextFilter } from './filters';
+import type { CategoryFilter, ColorFilter, Filter, LayerFilter, SizeFilter, TextFilter } from './filters';
 import type { IndexEntry, Result } from './types';
 
+import * as color from "../utils/color"
 import { findRanges } from '../utils/text';
-import { assertNever } from '../utils/assert';
+import { assert, assertNever } from '../utils/assert';
 
 type FilterResult = Result | boolean
 
@@ -16,7 +17,8 @@ function executeTextFilter(filter: TextFilter, entry: IndexEntry): FilterResult 
 	return {
 		id: entry.id,
 		title: text,
-		ranges
+		ranges,
+		entry,
 	}
 }
 
@@ -66,6 +68,19 @@ function executeLayerFilter(filter: LayerFilter, entry: IndexEntry): FilterResul
 	return filter.locked === entry.locked
 }
 
+function executeColorFilter(filter: ColorFilter, entry: IndexEntry): FilterResult {
+	if (entry.colors.length === 0) return false
+
+	const filterColor = color.convertRGBAtoHSLA(filter.color)
+	const entryColors = entry.colors.map(color.convertRGBAtoHSLA)
+	assert(entryColors[0])
+
+	const distance = color.getDistanceBetweenColorHSLA(filterColor, entryColors[0])
+	if (isNaN(distance)) return false
+
+	return distance < filter.distance
+}
+
 function executeFilter(filter: Filter, entry: IndexEntry): FilterResult {
 	switch(filter.type) {
 		case "text":
@@ -79,6 +94,9 @@ function executeFilter(filter: Filter, entry: IndexEntry): FilterResult {
 
 		case "layer":
 			return executeLayerFilter(filter, entry)
+
+		case "color":
+			return executeColorFilter(filter, entry)
 
 		default:
 			assertNever(filter)

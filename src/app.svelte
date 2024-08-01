@@ -71,7 +71,7 @@
   <!-- TODO(anthony): Why isn't result updating? -->
   <div class="results">
     {#each results as result (result.title, result.ranges)}
-      <ResultRow on:click={() => focusResult(result)}>
+      <ResultRow result={result} onclick={() => focusResult(result)}>
         <HighlightRange
           title={result.title}
           ranges={result.ranges}
@@ -95,6 +95,7 @@
   .info {
     display: flex;
     justify-content: space-between;
+    padding: 0 16px;
   }
 
   .results {

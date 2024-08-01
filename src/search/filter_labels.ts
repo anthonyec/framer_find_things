@@ -1,8 +1,9 @@
-import type { CategoryFilter, LayerFilter, SizeFilter } from "./filters"
+import type { CategoryFilter, ColorFilter, LayerFilter, SizeFilter } from "./filters"
 
 import { comparatorNames } from "./filters";
 
 import * as text from "../utils/text"
+import * as color from "../utils/color";
 
 export function getCategoryFilterLabel(filter: CategoryFilter): string {
   return `${text.capitalize(filter.category).replaceAll("-", " ")}`
@@ -30,4 +31,8 @@ export function getLayerFilterLabel(filter: LayerFilter): string {
   }
 
   return "Unlocked"
+}
+
+export function getColorFilterLabel(filter: ColorFilter): string {
+  return color.serializeColorRGBA(filter.color)
 }
