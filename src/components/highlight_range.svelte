@@ -7,6 +7,7 @@
 		replacement: string | undefined;
 		ranges: Range[];
 		preserveCase: boolean;
+		selected: boolean
 	}
 
 	let {
@@ -14,6 +15,7 @@
 		replacement,
 		ranges,
 		preserveCase,
+		selected
 	}: Props = $props()
 
 	const texts: { text: string; highlighted: boolean }[] = [];
@@ -45,14 +47,24 @@
 		<span class="old">{text}</span>
 		<span class="new">{preserveCase ? matchCase(replacement, text) : replacement}</span>
 	{:else}
-		<span class:highlighted>{text}</span>
+		<span class:highlighted class:selected>{text}</span>
 	{/if}
 {/each}
 
 <style>
 	.highlighted {
 		background: color-mix(in srgb, transparent, var(--framer-color-tint) 30%);
-		border-radius: 3px;
+		border-radius: 2px;
+		padding: 1px 0;
+	}
+
+	.highlighted.selected,
+	:global([data-framer-theme="dark"]) .highlighted.selected {
+		background: color-mix(in srgb, transparent, var(--framer-color-text-reversed) 30%);
+	}
+
+	:global([data-framer-theme="dark"]) .highlighted {
+		background: color-mix(in srgb, transparent, var(--framer-color-tint) 50%);
 	}
 
 	.old {

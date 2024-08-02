@@ -12,7 +12,10 @@
   import Filters from "./components/filters.svelte";
   import { buildIndex } from "./search/build_index";
 
+  let canvasSelection: string[] = $state([])
+
   let index: IndexEntry[] = $state([])
+
   let textSearchFilter: TextFilter = $state({
     id: "text-search",
     type: "text",
@@ -33,9 +36,15 @@
 	};
 
   const focusResult = async (result: Result) => {
-    await framer.zoomIntoView(result.id)
     await framer.setSelection(result.id)
+    await framer.zoomIntoView(result.id)
   }
+
+  $effect(() => {
+    return framer.subscribeToSelection((selection) => {
+      canvasSelection = selection.map((node) => node.id)
+    })
+  })
 
   $effect(() => {
     // TODO(anthony): Throttle this!
@@ -58,28 +67,31 @@
     <Filters slot="additional-filters" bind:filters={filters} />
   </SearchReplace>
 
-  <div class="info">
-    <span>
-      {#if results.length === 0}
-        No results found
-      {:else}
-        {results.length} {pluralize("result", "results", results.length)}
-      {/if}
-    </span>
-  </div>
-
   <!-- TODO(anthony): Why isn't result updating? -->
   <div class="results">
     {#each results as result (result.title, result.ranges)}
-      <ResultRow result={result} onclick={() => focusResult(result)}>
+      <ResultRow
+        selected={canvasSelection.includes(result.id)}
+        result={result}
+        onclick={() => focusResult(result)}
+      >
         <HighlightRange
           title={result.title}
           ranges={result.ranges}
           {replacement}
           {preserveCase}
+          selected={canvasSelection.includes(result.id)}
         />
       </ResultRow>
     {/each}
+  </div>
+
+  <div class="info">
+    {#if results.length !== 0}
+      <span>
+        {results.length} {pluralize("result", "results", results.length)}
+      </span>
+    {/if}
   </div>
 </div>
 
@@ -92,13 +104,20 @@
     position: absolute;
   }
 
-  .info {
+  .results {
     display: flex;
-    justify-content: space-between;
-    padding: 0 16px;
+    flex-direction: column;
+    gap: 1px;
+    height: 100%;
+    padding: 0 8px;
+    overflow-y: scroll;
   }
 
-  .results {
-    overflow-y: scroll;
+  .info {
+    color: var(--framer-color-text-tertiary);
+    display: flex;
+    justify-content: space-between;
+    justify-content: center;
+    padding: 8px 16px;
   }
 </style>

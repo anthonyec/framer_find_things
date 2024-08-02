@@ -7,12 +7,13 @@
   import IconTextLayer from "./icon_text_layer.svelte";
 
   let {
+    selected,
     result,
     onclick,
-  }: { onclick: () => void,  result: Result } = $props()
+  }: { selected: boolean, result: Result, onclick: () => void } = $props()
 </script>
 
-<button class="result-row" onclick={onclick}>
+<button class="result-row" class:selected onclick={onclick}>
   <div class="icon">
     {#if result.entry.type === "text"}
       <IconTextLayer />
@@ -40,18 +41,32 @@
 
 <style>
   .result-row {
-    background: transparent;
+    background-color: transparent;
     display: flex;
     width: 100%;
-    align-items: center;
-    padding: 0 16px;
-    gap: 8px;
+    height: auto;
+    align-items: start;
+    padding: 8px 8px;
+    gap: 7px;
+    transition: none;
+  }
+
+  .result-row.selected {
+    background: var(--framer-color-tint);
+    color: var(--framer-color-text-reversed);
+  }
+
+  .result-row.result-row.selected .icon,
+  .result-row.result-row.selected .properties {
+    color: var(--framer-color-text-reversed);
   }
 
   .icon {
     color: var(--framer-color-text-tertiary);
-    width: 11px;
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
+    height: 1lh;
   }
 
   .label {
@@ -60,6 +75,9 @@
 
   .properties {
     color: var(--framer-color-text-tertiary);
+    display: flex;
+    align-items: center;
+    height: 1lh;
     flex-shrink: 0;
     margin-left: auto;
   }
