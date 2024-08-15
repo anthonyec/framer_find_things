@@ -1,6 +1,6 @@
 <script lang="ts">
 	import IconFilter from './icon_filter.svelte';
-import ToggleButton from './toggle_button.svelte';
+	import ToggleButton from './toggle_button.svelte';
 
 	interface Props {
 		query: string;
@@ -9,6 +9,7 @@ import ToggleButton from './toggle_button.svelte';
 		replacement: string;
 		preserveCase: boolean;
 		onReplaceAllClick?: () => void;
+		onNavigate?: (direction: number) => void;
 	}
 
 	let {
@@ -17,7 +18,8 @@ import ToggleButton from './toggle_button.svelte';
 		regex = $bindable(),
 		replacement = $bindable(),
 		preserveCase  = $bindable(),
-		onReplaceAllClick = () => {}
+		onReplaceAllClick = () => {},
+		onNavigate
 	}: Props = $props()
 
 	let searchInput: HTMLInputElement
@@ -26,12 +28,21 @@ import ToggleButton from './toggle_button.svelte';
 	$effect(() => {
 		searchInput.focus()
 	})
+
+	const handleSearchKeyDown = (event: KeyboardEvent) => {
+		if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+			event.preventDefault()
+
+			const direction = event.key === "ArrowUp" ? -1 : 1
+			onNavigate?.(direction)
+		}
+	}
 </script>
 
 <div class="search-replace">
 	<div class="text-input-group">
 		<div class="text-input">
-			<input type="text" placeholder="Search" bind:this={searchInput} bind:value={query} />
+			<input type="text" placeholder="Search" bind:this={searchInput} bind:value={query} onkeydown={handleSearchKeyDown}/>
 
 			<div class="actions">
 				<ToggleButton label="Match Case" bind:checked={caseSensitive}>Aa</ToggleButton>
@@ -48,7 +59,6 @@ import ToggleButton from './toggle_button.svelte';
 			</div>
 		{/if}
 	</div>
-
 
 	<!-- <div class="text-input">
 		<input type="text" placeholder="Replace" bind:value={replacement} />

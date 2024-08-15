@@ -3,9 +3,6 @@
 
   import * as text from "../utils/text"
   import { comparatorNames, comparators } from "../search/filters";
-  import Popup from "./popup.svelte";
-  import type { MouseEventHandler } from "svelte/elements";
-  import { Vector2 } from "../utils/vector2";
 
   let {
     filter = $bindable(),
@@ -16,33 +13,31 @@
   let aspectRatio = $derived(width / height)
 </script>
 
-<Popup title="Size">
-  <div class="form">
-    <div class="group">
-      <select bind:value={filter.comparator}>
-        {#each comparators as comparator}
-          <option value={comparator}>{text.capitalize(comparatorNames[comparator])}</option>
-        {/each}
-      </select>
+<div class="form">
+  <div class="group">
+    <select bind:value={filter.comparator}>
+      {#each comparators as comparator}
+        <option value={comparator}>{text.capitalize(comparatorNames[comparator])}</option>
+      {/each}
+    </select>
 
-      <div class="size-inputs">
-        <input type="number" placeholder="Width" bind:value={filter.width} />
-        <input type="number" placeholder="Height" bind:value={filter.height} />
-      </div>
-    </div>
-
-    <div class="preview">
-      <div
-        class="preview-frame" style:aspect-ratio={aspectRatio}
-        style:width={width >= height ? "60%" : "auto"}
-        style:height={width <= height ? "60%" : "auto"}
-        role="button"
-        tabindex="-1"
-      >
-      </div>
+    <div class="size-inputs">
+      <input type="number" placeholder="Width" bind:value={filter.width} />
+      <input type="number" placeholder="Height" bind:value={filter.height} />
     </div>
   </div>
-</Popup>
+
+  <div class="preview">
+    <div
+      class="preview-frame" style:aspect-ratio={aspectRatio}
+      style:width={width >= height ? "60%" : "auto"}
+      style:height={width <= height ? "60%" : "auto"}
+      role="button"
+      tabindex="-1"
+    >
+    </div>
+  </div>
+</div>
 
 <style>
   select {

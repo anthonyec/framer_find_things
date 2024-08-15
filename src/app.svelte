@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IndexEntry, Result } from "./search/types"
-  import type { Filter, TextFilter } from "./search/filters";
+  import type { CategoryFilter, Filter, TextFilter } from "./search/filters";
 
   import HighlightRange from './components/highlight_range.svelte';
 	import SearchReplace from './components/search_replace.svelte';
@@ -11,7 +11,9 @@
   import { pluralize } from "./utils/text";
   import Filters from "./components/filters.svelte";
   import { buildIndex } from "./search/build_index";
+  import { clamp } from "./utils/math";
 
+  let selectedIndex: number = $state(-1)
   let canvasSelection: string[] = $state([])
 
   let index: IndexEntry[] = $state([])
@@ -23,7 +25,9 @@
     caseSensitive: false,
     regex: false,
   })
-  let filters: Filter[] = $state([textSearchFilter])
+  let categoryFilter: CategoryFilter = $state({ id: "category", type: "category", category: "text" })
+
+  let filters: Filter[] = $state([textSearchFilter, categoryFilter])
   let results: Result[] = $derived(executeFilters(filters, index))
 
 	let replacement: string = $state("");
@@ -34,6 +38,10 @@
 
     replaceAll(results, replacement, preserveCase)
 	};
+
+  const navigateResults = (direction: number) => {
+    selectedIndex = clamp(selectedIndex + direction, 0, results.length - 1)
+  }
 
   const focusResult = async (result: Result) => {
     await framer.setSelection(result.id)
@@ -63,6 +71,7 @@
     bind:replacement
     bind:preserveCase
     onReplaceAllClick={performReplaceAll}
+    onNavigate={navigateResults}
   >
     <Filters slot="additional-filters" bind:filters={filters} />
   </SearchReplace>
@@ -84,15 +93,21 @@
         />
       </ResultRow>
     {/each}
+
+    {#if results.length === 0 && textSearchFilter.query}
+      <div class="empty-state">
+        No results.
+      </div>
+    {/if}
   </div>
 
-  <div class="info">
-    {#if results.length !== 0}
+  {#if results.length !== 0}
+    <div class="info">
       <span>
         {results.length} {pluralize("result", "results", results.length)}
       </span>
-    {/if}
-  </div>
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -105,19 +120,31 @@
   }
 
   .results {
+    border-radius: 8px 8px 0 0;
     display: flex;
     flex-direction: column;
     gap: 1px;
     height: 100%;
-    padding: 0 8px;
+    margin: 0 8px;
     overflow-y: scroll;
   }
 
   .info {
     color: var(--framer-color-text-tertiary);
+    border-top: 1px solid var(--framer-color-divider);
     display: flex;
     justify-content: space-between;
     justify-content: center;
-    padding: 8px 16px;
+    align-items: center;
+    padding: 0 16px;
+    height: 50px;
+  }
+
+  .empty-state {
+    color: var(--framer-color-text-tertiary);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>

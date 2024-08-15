@@ -14,13 +14,15 @@
   import { getCategoryFilterLabel, getColorFilterLabel, getLayerFilterLabel, getSizeFilterLabel } from "../search/filter_labels";
   import ConfigureLayerFilter from "./configure_layer_filter.svelte";
   import ConfigureColorFilter from "./configure_color_filter.svelte";
+  import { getPopup } from "./popup_context.svelte";
 
   let {
     filters = $bindable()
   }: { filters: Filter[] } = $props()
 
+  const popup = getPopup()
+
   let currentFilter: Filter | null = $state(null)
-  let isAddMenuOpen: boolean = $state(false)
 
   let addButtonElement = $state<HTMLElement>()
   let chipElements = $state<Record<Filter["id"], HTMLDivElement>>({})
@@ -84,24 +86,20 @@
 
     if (!filter) return
 
-    filters.push(filter)
-
-    isAddMenuOpen = false
     currentFilter = filter
-  }
 
-  const openAddMenu = () => {
-    isAddMenuOpen = true
-    currentFilter = null
+    filters.push(filter)
+    popup.open(filter.id)
   }
 
   const openFilter = (filter: Filter) => {
     currentFilter = filter
-    isAddMenuOpen = false
+    popup.open(filter.id)
   }
 
   const closeFilter = () => {
     currentFilter = null
+    popup.close()
   }
 
   /**
@@ -118,9 +116,9 @@
 
   const removeFilter = (filter: Filter) => {
     currentFilter = null
-    isAddMenuOpen = false
-
     filters = array.remove(filters, filter)
+
+    popup.close()
   }
 </script>
 
@@ -128,7 +126,7 @@
   <div class="filters">
     {#each filters as filter}
       {#if filter.type !== "text"}
-        <FilterChip id={filter.id} open={filter.id === currentFilter?.id} onClick={() => toggleFilter(filter)} onRemoveClick={() => removeFilter(filter)}>
+        <FilterChip id={filter.id} open={popup.isOpen(filter.id)} onClick={() => toggleFilter(filter)} onRemoveClick={() => removeFilter(filter)}>
           {#if filter.type === "category"}
             {getCategoryFilterLabel(filter)}
           {/if}
@@ -149,29 +147,33 @@
     {/each}
   </div>
 
-  <button id="add-button" class="add-button" onmousedown={openAddMenu}>
+  <button id="add-button" class="add-button" onmousedown={() => popup.open("add-menu")}>
     <IconPlus />
   </button>
 </div>
 
-{#if currentFilter?.type === "category"}
-  <ConfigureCategoryFilter bind:filter={currentFilter} />
+{#if popup.isOpen(currentFilter?.id)}
+  <Popup target={addButtonElement} onDismiss={closeFilter}>
+    {#if currentFilter?.type === "category"}
+      <ConfigureCategoryFilter bind:filter={currentFilter} onConfigured={closeFilter} />
+    {/if}
+
+    {#if currentFilter?.type === "size"}
+      <ConfigureSizeFilter bind:filter={currentFilter} />
+    {/if}
+
+    {#if currentFilter?.type === "layer"}
+      <ConfigureLayerFilter bind:filter={currentFilter} />
+    {/if}
+
+    {#if currentFilter?.type === "color"}
+      <ConfigureColorFilter bind:filter={currentFilter} />
+    {/if}
+  </Popup>
 {/if}
 
-{#if currentFilter?.type === "size"}
-  <ConfigureSizeFilter bind:filter={currentFilter} />
-{/if}
-
-{#if currentFilter?.type === "layer"}
-  <ConfigureLayerFilter bind:filter={currentFilter} />
-{/if}
-
-{#if currentFilter?.type === "color"}
-  <ConfigureColorFilter bind:filter={currentFilter} />
-{/if}
-
-{#if isAddMenuOpen}
-  <Popup target={addButtonElement}>
+{#if popup.isOpen("add-menu")}
+  <Popup target={addButtonElement} onDismiss={popup.close}>
     <MenuItems
       items={[
         { id: "category", label: "Category", action: () => addFilter("category") },

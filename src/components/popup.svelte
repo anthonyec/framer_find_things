@@ -1,22 +1,52 @@
 <script lang="ts">
+  // TODO(anthony): Funny how this can't be exported here.
+  interface Props {
+    title?: string;
+    target?: HTMLElement | undefined;
+    onDismiss?: () => void
+  }
+
   let {
     title,
     target,
-  }: { title?: string, target?: HTMLElement | undefined } = $props()
+    onDismiss
+  }: Props = $props()
 
+  let modalElement: HTMLElement | undefined = $state()
   let position: { x: number, y: number } = $state({ x: 50, y: 50 })
+
+  const handleWindowClick = (event: MouseEvent) => {
+    if (!(event.target instanceof HTMLElement) || !modalElement) return
+
+    console.log("handleWindowClick", target)
+
+    if (target) {
+      console.log("target", target)
+    }
+
+    const isClickInside = modalElement.contains(event.target)
+    if (isClickInside) return
+
+    onDismiss?.()
+  }
+
+  $effect(() => {
+    window.addEventListener("click", handleWindowClick)
+
+    return () => {
+      window.removeEventListener("click", handleWindowClick)
+    }
+  })
 
   $effect(() => {
     if (!target) return
-
-    console.log(target)
 
     const { x, y } = target.getBoundingClientRect()
     position = { x, y }
   })
 </script>
 
-<modal class="popup" open style:left={position.x} style:top={position.y}>
+<modal bind:this={modalElement} class="popup" open style:left={position.x} style:top={position.y}>
   <!-- {#if title}
     <h2>{title}</h2>
   {/if} -->

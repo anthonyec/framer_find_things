@@ -1,19 +1,15 @@
 <script lang="ts">
   import type { LayerFilter } from "../search/filters";
 
-  import Popup from "./popup.svelte";
-
   let {
     filter = $bindable(),
   }: { filter: LayerFilter } = $props()
 </script>
 
-<Popup title="Size">
-  <div class="form">
-    Locked:
-    <input type="checkbox" bind:checked={filter.locked}/>
-  </div>
-</Popup>
+<div class="form">
+  Locked:
+  <input type="checkbox" bind:checked={filter.locked}/>
+</div>
 
 <style>
   .form {

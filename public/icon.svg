@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon</title>
+    <g id="icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="#FFBD00" x="0" y="0" width="30" height="30"></rect>
+        <rect id="Rectangle" fill-opacity="0" fill="#FFFFFF" x="9" y="9" width="12" height="12" rx="1"></rect>
+        <path d="M20,7 C21.6568542,7 23,8.34314575 23,10 L23,20 C23,21.6568542 21.6568542,23 20,23 L10,23 C8.34314575,23 7,21.6568542 7,20 L7,10 C7,8.34314575 8.34314575,7 10,7 L20,7 Z M20,9 L10,9 C9.44771525,9 9,9.44771525 9,10 L9,20 C9,20.5522847 9.44771525,21 10,21 L20,21 C20.5522847,21 21,20.5522847 21,20 L21,10 C21,9.44771525 20.5522847,9 20,9 Z" id="Rectangle" fill="#000000" fill-rule="nonzero"></path>
+        <rect id="Rectangle" fill="#FFBE00" x="5" y="5" width="12" height="12"></rect>
+        <path d="M10.5,6 C12.9852814,6 15,8.01471863 15,10.5 C15,12.9852814 12.9852814,15 10.5,15 C8.01471863,15 6,12.9852814 6,10.5 C6,8.01471863 8.01471863,6 10.5,6 Z M10.5,8 C9.11928813,8 8,9.11928813 8,10.5 C8,11.8807119 9.11928813,13 10.5,13 C11.8807119,13 13,11.8807119 13,10.5 C13,9.11928813 11.8807119,8 10.5,8 Z" id="Oval" fill="#000000" fill-rule="nonzero"></path>
+        <polygon id="Line" fill="#000000" fill-rule="nonzero" points="13 11.5857864 13.7071068 12.2928932 16.7071068 15.2928932 17.4142136 16 16 17.4142136 15.2928932 16.7071068 12.2928932 13.7071068 11.5857864 13"></polygon>
+    </g>
+</svg>

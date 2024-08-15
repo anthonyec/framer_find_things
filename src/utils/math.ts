@@ -1,3 +1,3 @@
-export function normalizeAspectRatio(width: number, height: number): number {
-  return Math.max(width, height) / Math.min(width, height)
+export function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max)
 }

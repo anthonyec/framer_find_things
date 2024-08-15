@@ -47,6 +47,7 @@
     height: auto;
     align-items: start;
     padding: 8px 8px;
+    padding-right: 10px;
     gap: 7px;
     transition: none;
   }

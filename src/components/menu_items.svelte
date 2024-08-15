@@ -1,18 +1,25 @@
 <script lang="ts">
   import IconCheckmark from "./icon_checkmark.svelte";
 
+  type MenuItem = { id: string, label: string, selected?: boolean, action?: () => void }
+
   interface Props {
-    items: { id: string, label: string, selected?: boolean, action?: () => void }[]
+    items: MenuItem[]
   }
 
   let { items }: Props = $props()
 
   const showCheckmarks = items.some(item => typeof item.selected === "boolean")
+
+  const handleItemMouseUp = (event: MouseEvent, item: MenuItem) => {
+    event.stopPropagation()
+    item.action?.()
+  }
 </script>
 
 <div class="menu-items">
   {#each items as item}
-    <button onmouseup={() => item.action?.()}>
+    <button onmouseup={(event) => handleItemMouseUp(event, item)}>
       {#if showCheckmarks}
         <div class="checkmark">
           {#if item.selected}
