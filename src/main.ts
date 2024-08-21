@@ -6,7 +6,7 @@ import { framer } from "framer-plugin"
 import { mount } from 'svelte'
 
 void framer.showUI({
-  title: "Find Things",
+  title: "Find Replace",
   position: "top right",
   width: 320,
   height: 420,

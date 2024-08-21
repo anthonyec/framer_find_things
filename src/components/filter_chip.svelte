@@ -12,11 +12,12 @@
     id,
     open,
     onClick,
-    onRemoveClick
+    onRemoveClick,
+    el = $bindable()
   }: Props = $props()
 </script>
 
-<div id={id} class="filter" class:open={open}>
+<div bind:this={el} id={id} class="filter" class:open={open}>
   <button class="open-button" onmousedown={() => onClick()}><slot /></button>
   <button class="delete-button" onclick={() => onRemoveClick()}><IconClose /></button>
 </div>

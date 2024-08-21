@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IconCheckmark from "./icon_checkmark.svelte";
+  import iconCheckmark from "../assets/icon_checkmark.svg?raw";
 
   type MenuItem = { id: string, label: string, selected?: boolean, action?: () => void }
 
@@ -23,7 +23,7 @@
       {#if showCheckmarks}
         <div class="checkmark">
           {#if item.selected}
-            <IconCheckmark />
+            {@html iconCheckmark}
           {/if}
         </div>
       {/if}

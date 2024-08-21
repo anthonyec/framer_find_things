@@ -27,11 +27,6 @@
   let addButtonElement = $state<HTMLElement>()
   let chipElements = $state<Record<Filter["id"], HTMLDivElement>>({})
 
-  // let anchor: HTMLDivElement | null = $derived.by(() => {
-  //   if (currentFilter) return filterIdToElement[currentFilter.id]
-  //   return null
-  // })
-
   $inspect("chipElements", chipElements)
 
   const addFilter = (type: Filter["type"]) => {
@@ -94,6 +89,7 @@
 
   const openFilter = (filter: Filter) => {
     currentFilter = filter
+    // target = sfdsdfsd
     popup.open(filter.id)
   }
 
@@ -120,13 +116,25 @@
 
     popup.close()
   }
+
+  import { setContext } from "svelte";
+
+  // const CONTEXT_KEY = "POPUP";
+
+  let target = $state(null);
+
+  setContext("popup", {
+    target
+  });
+
+  $inspect(chipElements)
 </script>
 
 <div class="filters-container">
   <div class="filters">
     {#each filters as filter}
       {#if filter.type !== "text"}
-        <FilterChip id={filter.id} open={popup.isOpen(filter.id)} onClick={() => toggleFilter(filter)} onRemoveClick={() => removeFilter(filter)}>
+        <FilterChip bind:el={chipElements[filter.id]} id={filter.id} open={popup.isOpen(filter.id)} onClick={(e) => toggleFilter(filter)} onRemoveClick={() => removeFilter(filter)}>
           {#if filter.type === "category"}
             {getCategoryFilterLabel(filter)}
           {/if}
@@ -147,13 +155,13 @@
     {/each}
   </div>
 
-  <button id="add-button" class="add-button" onmousedown={() => popup.open("add-menu")}>
+  <button bind:this={addButtonElement} id="add-button" class="add-button" onmousedown={() => popup.open("add-menu")}>
     <IconPlus />
   </button>
 </div>
 
-{#if popup.isOpen(currentFilter?.id)}
-  <Popup target={addButtonElement} onDismiss={closeFilter}>
+{#if currentFilter?.id && popup.isOpen(currentFilter?.id)}
+  <Popup target={chipElements[currentFilter.id]} onDismiss={closeFilter}>
     {#if currentFilter?.type === "category"}
       <ConfigureCategoryFilter bind:filter={currentFilter} onConfigured={closeFilter} />
     {/if}

@@ -44,8 +44,8 @@
 
 {#each texts as { text, highlighted }}
 	{#if replacement && highlighted}
-		<span class="old">{text}</span>
-		<span class="new">{preserveCase ? matchCase(replacement, text) : replacement}</span>
+		<span class="old" class:selected>{text}</span>
+		<span class="new" class:selected>{preserveCase ? matchCase(replacement, text) : replacement}</span>
 	{:else}
 		<span class:highlighted class:selected>{text}</span>
 	{/if}
@@ -69,12 +69,21 @@
 
 	.old {
 		border-radius: 3px;
-		color: gray;
+		color: color-mix(in srgb, transparent, var(--framer-color-text-tertiary) 60%);
 		text-decoration: line-through;
+	}
+
+	.old.selected {
+		color: color-mix(in srgb, transparent, var(--framer-color-text-reversed) 60%);
 	}
 
 	.new {
 		border-radius: 3px;
-		color: cyan;
+		color: var(--framer-color-tint);
+	}
+
+	.new.selected {
+		color: var(--framer-color-text-reversed);
+		text-decoration: underline;
 	}
 </style>

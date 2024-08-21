@@ -137,7 +137,8 @@
     justify-content: center;
     align-items: center;
     padding: 0 16px;
-    height: 50px;
+    height: 42px;
+    flex-shrink: 0;
   }
 
   .empty-state {

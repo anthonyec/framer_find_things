@@ -60,7 +60,7 @@
 		{/if}
 	</div>
 
-	<!-- <div class="text-input">
+	<div class="text-input">
 		<input type="text" placeholder="Replace" bind:value={replacement} />
 
 		<div class="actions">
@@ -68,7 +68,7 @@
 		</div>
 	</div>
 
-	<button class="framer-button-primary" onclick={onReplaceAllClick} disabled={!replacement}>Replace All</button> -->
+	<button onclick={onReplaceAllClick} disabled={!replacement}>Replace All</button>
 </div>
 
 <style>

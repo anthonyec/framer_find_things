@@ -92,7 +92,7 @@ export async function buildIndex(): Promise<IndexEntry[]> {
       name: colorStyle.name,
       text: null,
       rect: null,
-      colors: [color.parseColorRGBA(colorStyle.light)], // TODO(anthony): Add dark color here.
+      colors: [color.parseColorRGBA(colorStyle.light ?? "")], // TODO(anthony): Add dark color here.
       hidden: false,
       locked: false
     })
@@ -105,7 +105,7 @@ export async function buildIndex(): Promise<IndexEntry[]> {
       name: textStyle.name || getTextStyleTagName(textStyle.tag),
       text: null,
       rect: null,
-      colors: [color.parseColorRGBA(textStyle.color)],
+      colors: [color.parseColorRGBA(textStyle.color ?? "")],
       hidden: false,
       locked: false
     })
