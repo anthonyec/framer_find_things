@@ -47,9 +47,6 @@
 			<div class="actions">
 				<ToggleButton label="Match Case" bind:checked={caseSensitive}>Aa</ToggleButton>
 				<ToggleButton label="Use Regular Expression" bind:checked={regex}>.*</ToggleButton>
-				<ToggleButton label="Use Filters" bind:checked={additionalFilters}>
-					<IconFilter />
-				</ToggleButton>
 			</div>
 		</div>
 

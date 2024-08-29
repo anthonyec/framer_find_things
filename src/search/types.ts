@@ -9,7 +9,6 @@ export interface IndexEntry {
 	name: string;
 	text: string | null;
 	rect: { x: number, y: number, width: number, height: number } | null
-	colors: ColorRGBA[]
 	hidden: boolean
 	locked: boolean
 }

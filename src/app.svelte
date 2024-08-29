@@ -10,9 +10,12 @@
   import ResultRow from "./components/result_row.svelte";
   import { pluralize } from "./utils/text";
   import Filters from "./components/filters.svelte";
-  import { buildIndex } from "./search/build_index";
   import { clamp } from "./utils/math";
+  import { Indexer } from "./search/indexer";
+  import Spinner from "./components/spinner.svelte";
+  import PlaceholderResultRow from "./components/placeholder_result_row.svelte";
 
+  let indexing: boolean = $state(false)
   let selectedIndex: number = $state(-1)
   let canvasSelection: string[] = $state([])
 
@@ -55,12 +58,27 @@
   })
 
   $effect(() => {
-    // TODO(anthony): Throttle this!
+    const indexer = new Indexer({
+      onStarted: () => {
+        indexing = true
+        index = []
+      },
+
+      onProgress: (entries) => {
+        index.push(...entries)
+      },
+
+      onCompleted: () => {
+        indexing = false
+      }
+    })
+
     return framer.subscribeToCanvasRoot(async () => {
-      index = await buildIndex()
-      console.log("re-index", results)
+      indexer.start()
     })
   })
+
+  $inspect("indexing", indexing)
 </script>
 
 <div class="app">
@@ -76,7 +94,6 @@
     <Filters slot="additional-filters" bind:filters={filters} />
   </SearchReplace>
 
-  <!-- TODO(anthony): Why isn't result updating? -->
   <div class="results">
     {#each results as result (result.title, result.ranges)}
       <ResultRow
@@ -94,16 +111,30 @@
       </ResultRow>
     {/each}
 
+    {#if indexing && textSearchFilter.query}
+      <PlaceholderResultRow index={0} total={5} width={30} />
+      <PlaceholderResultRow index={1} total={5} width={50} />
+      <PlaceholderResultRow index={2} total={5} width={20} />
+      <PlaceholderResultRow index={3} total={5} width={70} />
+      <PlaceholderResultRow index={4} total={5} width={20} />
+    {/if}
+
     {#if results.length === 0 && textSearchFilter.query}
       <div class="empty-state">
-        No results.
+        {#if !indexing}
+          No results
+        {/if}
       </div>
     {/if}
   </div>
 
   {#if results.length !== 0}
     <div class="info">
-      <span>
+      {#if indexing}
+        <Spinner />
+      {/if}
+
+      <span class="count">
         {results.length} {pluralize("result", "results", results.length)}
       </span>
     </div>
@@ -133,12 +164,16 @@
     color: var(--framer-color-text-tertiary);
     border-top: 1px solid var(--framer-color-divider);
     display: flex;
-    justify-content: space-between;
-    justify-content: center;
     align-items: center;
-    padding: 0 16px;
+    padding: 0 12px;
     height: 42px;
     flex-shrink: 0;
+  }
+
+  .count {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .empty-state {
