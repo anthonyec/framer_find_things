@@ -1,6 +1,6 @@
 {
   "id": "T29LKw",
   "name": "Find Replace",
-  "modes": ["default"],
+  "modes": ["canvas"],
   "icon": "/icon.svg"
 }
