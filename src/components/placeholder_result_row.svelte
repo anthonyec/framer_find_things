@@ -14,7 +14,7 @@
 <style>
   @keyframes pulse {
     0% {
-      opacity: 0.5;
+      opacity: 0.3;
     }
 
     50% {
@@ -22,7 +22,7 @@
     }
 
     100% {
-      opacity: 0.5;
+      opacity: 0.3;
     }
   }
 
@@ -35,7 +35,7 @@
     height: 30px;
     padding-left: 8px;
     gap: 7px;
-    animation: pulse 2s ease infinite;
+    animation: pulse 1.5s ease infinite;
     animation-fill-mode: forwards;
   }
 

@@ -6,6 +6,7 @@
 		query: string;
 		caseSensitive: boolean;
 		regex: boolean;
+		searchProject: boolean
 		replacement: string;
 		preserveCase: boolean;
 		onReplaceAllClick?: () => void;
@@ -18,6 +19,7 @@
 		regex = $bindable(),
 		replacement = $bindable(),
 		preserveCase  = $bindable(),
+		searchProject = $bindable(),
 		onReplaceAllClick = () => {},
 		onNavigate
 	}: Props = $props()
@@ -47,6 +49,7 @@
 			<div class="actions">
 				<ToggleButton label="Match Case" bind:checked={caseSensitive}>Aa</ToggleButton>
 				<ToggleButton label="Use Regular Expression" bind:checked={regex}>.*</ToggleButton>
+				<!-- <ToggleButton label="Search Whole Project" bind:checked={searchProject}>S</ToggleButton> -->
 			</div>
 		</div>
 

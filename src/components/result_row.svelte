@@ -42,6 +42,7 @@
 <style>
   .result-row {
     background-color: transparent;
+    cursor: default;
     display: flex;
     width: 100%;
     height: auto;
@@ -50,6 +51,7 @@
     padding-right: 10px;
     gap: 7px;
     transition: none;
+    user-select: none;
   }
 
   .result-row.selected {

@@ -35,6 +35,7 @@
 
 	let replacement: string = $state("");
 	let preserveCase: boolean = $state(false);
+	let searchProject: boolean = $state(false);
 
 	const performReplaceAll = () => {
     if (!replacement) return
@@ -59,6 +60,8 @@
 
   $effect(() => {
     const indexer = new Indexer({
+      scope: searchProject ? "project" : "page",
+
       onStarted: () => {
         indexing = true
         index = []
@@ -73,12 +76,12 @@
       }
     })
 
-    return framer.subscribeToCanvasRoot(async () => {
-      indexer.start()
-    })
-  })
+    indexer.start()
 
-  $inspect("indexing", indexing)
+    // return framer.subscribeToCanvasRoot(async () => {
+    //   indexer.update()
+    // })
+  })
 </script>
 
 <div class="app">
@@ -88,6 +91,7 @@
     bind:regex={textSearchFilter.regex}
     bind:replacement
     bind:preserveCase
+    bind:searchProject
     onReplaceAllClick={performReplaceAll}
     onNavigate={navigateResults}
   >
@@ -157,6 +161,7 @@
     gap: 1px;
     height: 100%;
     margin: 0 8px;
+    padding-bottom: 8px;
     overflow-y: scroll;
   }
 
@@ -168,6 +173,7 @@
     padding: 0 12px;
     height: 42px;
     flex-shrink: 0;
+    user-select: none;
   }
 
   .count {
