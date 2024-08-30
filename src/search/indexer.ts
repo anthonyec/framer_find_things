@@ -1,6 +1,6 @@
 import type { IndexEntry } from "./types";
 
-import { framer, isTextNode, isWebPageNode, WebPageNode } from "framer-plugin";
+import { framer, isTextNode, isWebPageNode, TextNode, WebPageNode, type AnyNode } from "framer-plugin";
 
 interface IndexerOptions {
   scope: "project" | "page"
@@ -10,7 +10,7 @@ interface IndexerOptions {
 }
 
 export class Indexer {
-  private entries: IndexEntry[] = [];
+  private entries: Record<string, IndexEntry> = {}
   private batchSize: number = 10;
   private scope: IndexerOptions["scope"] = "page"
   private onStarted: IndexerOptions["onStarted"] | undefined;
@@ -24,19 +24,13 @@ export class Indexer {
     this.onCompleted = options.onCompleted;
   }
 
-  async start() {
-    const root = await framer.getCanvasRoot();
-    if (!isWebPageNode(root)) return;
-
-    this.onStarted?.();
-
-    let pages: WebPageNode[] = [root];
-
-    if (this.scope === "project") {
-      const webPages = await framer.getNodesWithType("WebPageNode");
-      pages = webPages
+  private addEntries(entries: IndexEntry[]) {
+    for (const entry of entries) {
+      this.entries[entry.id] = entry
     }
+  }
 
+  private async *crawl(pages: WebPageNode[]): AsyncGenerator<IndexEntry[]> {
     let batch: IndexEntry[] = [];
 
     for (const page of pages) {
@@ -57,22 +51,45 @@ export class Indexer {
           hidden: !node.visible, // TODO(anthony): Rename hidden to visible.
           rect,
           text,
-        });
+        })
 
         if (batch.length === this.batchSize) {
-          this.entries.push(...batch);
-          this.onProgress?.(batch);
-
+          yield batch
           batch = [];
         }
       }
     }
 
     if (batch.length > 0) {
-      this.entries.push(...batch);
-      this.onProgress?.(batch);
+      yield batch
+    }
+  }
+
+  private async getPages(): Promise<WebPageNode[]> {
+    const root = await framer.getCanvasRoot();
+    if (!isWebPageNode(root)) return []
+
+    if (this.scope === "page") {
+      return [root]
     }
 
-    this.onCompleted?.(this.entries);
+    return await framer.getNodesWithType("WebPageNode");
+  }
+
+  async start() {
+    const pages = await this.getPages()
+
+    this.onStarted?.();
+
+    for await (const batch of this.crawl(pages)) {
+      this.addEntries(batch);
+      this.onProgress?.(batch)
+    }
+
+    this.onCompleted?.(Object.values(this.entries));
+  }
+
+  async patch() {
+
   }
 }

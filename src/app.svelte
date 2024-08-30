@@ -78,9 +78,9 @@
 
     indexer.start()
 
-    // return framer.subscribeToCanvasRoot(async () => {
-    //   indexer.update()
-    // })
+    return framer.subscribeToCanvasRoot(async () => {
+      indexer.patch()
+    })
   })
 </script>
 
