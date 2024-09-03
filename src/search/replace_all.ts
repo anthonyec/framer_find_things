@@ -1,39 +1,37 @@
-import type { Result } from './types';
+import type { Result } from "./types";
 
-import { isComponentInstanceNode, isFrameNode, isTextNode } from 'framer-plugin';
-import { replaceAllRanges } from '../utils/text';
-// import { isColorStyle, isTextStyle } from '../utils/traits';
+import { framer, isFrameNode, isTextNode } from "framer-plugin";
+import { replaceAllRanges } from "../utils/text";
 
-export async function replaceAll(results: Result[], replacement: string, preserveCase: boolean) {
-	for (const result of results) {
-		const { title, node, ranges } = result;
+export async function replaceAll(
+  results: Result[],
+  replacement: string,
+  preserveCase: boolean
+) {
+  for (const result of results) {
+    const node = await framer.getNode(result.id);
+    if (!node) continue;
 
-		if (isTextNode(node)) {
-			const replacedText = replaceAllRanges(title, replacement, ranges, preserveCase);
+    if (isTextNode(node)) {
+      const replacedText = replaceAllRanges(
+        result.title,
+        replacement,
+        result.ranges,
+        preserveCase
+      );
 
-			await node.setText(replacedText);
-			continue;
-		}
+      await node.setText(replacedText);
+    }
 
-		if (isFrameNode(node)) {
-			const replacedText = replaceAllRanges(
-				node.name ?? 'Frame',
-				replacement,
-				ranges,
-				preserveCase
-			);
+    if (isFrameNode(node)) {
+      const replacedText = replaceAllRanges(
+        result.title,
+        replacement,
+        result.ranges,
+        preserveCase
+      );
 
-			await node.setAttributes({ name: replacedText });
-			continue;
-		}
-
-		if (isComponentInstanceNode(node)) { //  || isColorStyle(node) || isTextStyle(node)
-			if (!node.name) continue;
-
-			const replacedText = replaceAllRanges(node.name, replacement, ranges, preserveCase);
-
-			await node.setAttributes({ name: replacedText });
-			continue;
-		}
-	}
+      await node.setAttributes({ name: replacedText });
+    }
+  }
 }

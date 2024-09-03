@@ -9,7 +9,6 @@
   import { framer } from "framer-plugin"
   import ResultRow from "./components/result_row.svelte";
   import { pluralize } from "./utils/text";
-  import Filters from "./components/filters.svelte";
   import { clamp } from "./utils/math";
   import { Indexer } from "./search/indexer";
   import Spinner from "./components/spinner.svelte";
@@ -97,9 +96,7 @@
     bind:searchProject
     onReplaceAllClick={performReplaceAll}
     onNavigate={navigateResults}
-  >
-    <Filters slot="additional-filters" bind:filters={filters} />
-  </SearchReplace>
+  />
 
   <div class="results">
     {#each results as result (result.title, result.ranges)}

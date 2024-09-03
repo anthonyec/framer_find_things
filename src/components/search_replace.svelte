@@ -1,5 +1,4 @@
 <script lang="ts">
-	import IconFilter from './icon_filter.svelte';
 	import ToggleButton from './toggle_button.svelte';
 
 	interface Props {
