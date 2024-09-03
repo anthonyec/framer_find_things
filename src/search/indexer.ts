@@ -5,28 +5,30 @@ import { framer, isTextNode, isWebPageNode, TextNode, WebPageNode, type AnyNode 
 interface IndexerOptions {
   scope: "project" | "page"
   onStarted: () => void;
-  onProgress: (entries: IndexEntry[]) => void;
-  onCompleted: (entries: IndexEntry[]) => void;
+  onUpsert: (entry: IndexEntry) => void;
+  onCompleted: () => void;
 }
 
 export class Indexer {
   private entries: Record<string, IndexEntry> = {}
   private batchSize: number = 10;
   private scope: IndexerOptions["scope"] = "page"
+  private abortRequested: boolean = false
   private onStarted: IndexerOptions["onStarted"] | undefined;
-  private onProgress: IndexerOptions["onProgress"] | undefined;
+  private onUpsert: IndexerOptions["onUpsert"] | undefined;
   private onCompleted: IndexerOptions["onCompleted"] | undefined;
 
   constructor(options: IndexerOptions) {
     this.scope = options.scope
     this.onStarted = options.onStarted;
-    this.onProgress = options.onProgress;
+    this.onUpsert = options.onUpsert;
     this.onCompleted = options.onCompleted;
   }
 
-  private addEntries(entries: IndexEntry[]) {
+  private upsertEntries(entries: IndexEntry[]) {
     for (const entry of entries) {
       this.entries[entry.id] = entry
+      this.onUpsert?.(entry)
     }
   }
 
@@ -82,14 +84,11 @@ export class Indexer {
     this.onStarted?.();
 
     for await (const batch of this.crawl(pages)) {
-      this.addEntries(batch);
-      this.onProgress?.(batch)
+      if (this.abortRequested) return
+
+      this.upsertEntries(batch);
     }
 
-    this.onCompleted?.(Object.values(this.entries));
-  }
-
-  async patch() {
-
+    this.onCompleted?.();
   }
 }

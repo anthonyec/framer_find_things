@@ -19,7 +19,7 @@
   let selectedIndex: number = $state(-1)
   let canvasSelection: string[] = $state([])
 
-  let index: IndexEntry[] = $state([])
+  let index: Record<string, IndexEntry> = $state({})
 
   let textSearchFilter: TextFilter = $state({
     id: "text-search",
@@ -31,7 +31,8 @@
   let categoryFilter: CategoryFilter = $state({ id: "category", type: "category", category: "text" })
 
   let filters: Filter[] = $state([textSearchFilter, categoryFilter])
-  let results: Result[] = $derived(executeFilters(filters, index))
+  let entries: IndexEntry[] = $derived(Object.values(index))
+  let results: Result[] = $derived(executeFilters(filters, entries))
 
 	let replacement: string = $state("");
 	let preserveCase: boolean = $state(false);
@@ -59,16 +60,17 @@
   })
 
   $effect(() => {
+    index = {}
+
     const indexer = new Indexer({
       scope: searchProject ? "project" : "page",
 
       onStarted: () => {
         indexing = true
-        index = []
       },
 
-      onProgress: (entries) => {
-        index.push(...entries)
+      onUpsert: (entry) => {
+        index[entry.id] = entry
       },
 
       onCompleted: () => {
@@ -79,7 +81,7 @@
     indexer.start()
 
     return framer.subscribeToCanvasRoot(async () => {
-      indexer.patch()
+      // indexer.start()
     })
   })
 </script>
