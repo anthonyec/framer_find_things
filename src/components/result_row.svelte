@@ -15,15 +15,15 @@
 
 <button class="result-row" class:selected onclick={onclick}>
   <div class="icon">
-    {#if result.entry.type === "text"}
+    {#if result.entry.type === "TextNode"}
       <IconTextLayer />
     {/if}
 
-    {#if result.entry.type === "frame"}
+    {#if result.entry.type === "FrameNode"}
       <IconFramerLayer />
     {/if}
 
-    {#if result.entry.type === "component"}
+    {#if result.entry.type === "ComponentInstanceNode"}
       <IconComponentLayer />
     {/if}
   </div>

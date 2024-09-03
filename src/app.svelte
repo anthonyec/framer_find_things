@@ -28,7 +28,7 @@
     caseSensitive: false,
     regex: false,
   })
-  let categoryFilter: CategoryFilter = $state({ id: "category", type: "category", category: "text" })
+  let categoryFilter: CategoryFilter = $state({ id: "category", type: "category", category: "all" })
 
   let filters: Filter[] = $state([textSearchFilter, categoryFilter])
   let entries: IndexEntry[] = $derived(Object.values(index))
@@ -64,6 +64,7 @@
 
     const indexer = new Indexer({
       scope: searchProject ? "project" : "page",
+      include: [],
 
       onStarted: () => {
         indexing = true

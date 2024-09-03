@@ -1,3 +1,5 @@
+import type { IndexEntry } from "./types"
+
 interface BaseFilter {
 	id: string;
 	type: 'text' | "category" | "size" | "layer" | "color";
@@ -14,7 +16,7 @@ export const categories = ["all", "frame", "text", "component", "color-style", "
 
 export interface CategoryFilter extends BaseFilter {
 	type: 'category';
-	category: (typeof categories)[number];
+	category: "all" | IndexEntry["type"];
 }
 
 export const comparators = [">", "<", "=", "~="] as const

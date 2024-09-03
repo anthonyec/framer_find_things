@@ -2,7 +2,7 @@ import type { CategoryFilter, Filter, LayerFilter, SizeFilter, TextFilter } from
 import type { IndexEntry, Result } from './types';
 
 import { findRanges } from '../utils/text';
-import { assert, assertNever } from '../utils/assert';
+import { assertNever } from '../utils/assert';
 
 type FilterResult = Result | boolean
 
