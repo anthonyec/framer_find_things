@@ -1,5 +1,3 @@
-import type { ColorRGBA } from "../utils/color";
-
 interface BaseFilter {
 	id: string;
 	type: 'text' | "category" | "size" | "layer" | "color";
@@ -43,13 +41,7 @@ export interface LayerFilter extends BaseFilter {
 	locked: boolean
 }
 
-export interface ColorFilter extends BaseFilter {
-	type: "color"
-	color: ColorRGBA
-	distance: number
-}
-
-export type Filter = TextFilter | CategoryFilter | SizeFilter | LayerFilter | ColorFilter;
+export type Filter = TextFilter | CategoryFilter | SizeFilter | LayerFilter;
 
 export function isTextFilter(filter: Filter | undefined): filter is TextFilter {
 	return typeof filter !== 'undefined' && filter.type === 'text';
@@ -65,8 +57,4 @@ export function isSizeFilter(filter: Filter | undefined): filter is SizeFilter {
 
 export function isLayerFilter(filter: Filter | undefined): filter is LayerFilter {
 	return typeof filter !== 'undefined' && filter.type === 'layer';
-}
-
-export function isColorFilter(filter: Filter | undefined): filter is ColorFilter {
-	return typeof filter !== 'undefined' && filter.type === 'color';
 }
