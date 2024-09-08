@@ -52,7 +52,7 @@
     replacer.start({
       results,
       replacement,
-      preserveCase: false
+      preserveCase: false,
     });
   };
 
@@ -67,12 +67,7 @@
 
     const indexer = new Indexer({
       scope: searchProject ? "project" : "page",
-      includedNodeTypes: [
-        "TextNode",
-        "FrameNode",
-        "SVGNode",
-        "ComponentInstanceNode",
-      ],
+      includedNodeTypes: ["FrameNode", "SVGNode", "ComponentInstanceNode"],
       includedAttributes: [],
 
       onStarted: () => {

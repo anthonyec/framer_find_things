@@ -29,7 +29,7 @@
 
   <button class="rename-button" onclick={onRenameClick} disabled={!replacement || replacing}>
 		{#if replacing}
-			<Spinner />
+			<Spinner type="solid" />
 		{:else}
 			Rename
 		{/if}
@@ -48,5 +48,8 @@
 	.rename-button {
 		background: #111111;
 		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 </style>
