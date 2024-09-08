@@ -14,17 +14,12 @@
     selectedNodeIds: string[];
   }
 
-  let {
-    query,
-    replacement,
-    indexing,
-    results,
-    selectedNodeIds,
-  }: Props = $props();
+  let { query, replacement, indexing, results, selectedNodeIds }: Props =
+    $props();
 
   const focusResult = async (result: Result) => {
     await framer.setSelection(result.id);
-    await framer.zoomIntoView(result.id);
+    await framer.zoomIntoView(result.id, { maxZoom: 1 });
   };
 </script>
 

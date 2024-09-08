@@ -9,6 +9,7 @@
   import starsImage from "./assets/stars.png";
   import Results from "./components/results.svelte";
   import { Replacer } from "./search/replacer";
+  import Tabs from "./components/tabs.svelte";
 
   let indexing: boolean = $state(false);
   let replacing: boolean = $state(false);
@@ -39,6 +40,10 @@
   const replacer = new Replacer({
     onStarted: () => {
       replacing = true;
+    },
+
+    onProgress: (count, total) => {
+      console.log(count, total)
     },
 
     onCompleted: () => {
@@ -93,8 +98,9 @@
   });
 </script>
 
-<!-- svelte-ignore state_referenced_locally -->
 <div class="app">
+  <!-- <Tabs active="Search" items={["Search", "Clean"]} /> -->
+
   {#if results.length === 0}
     <div class="splash">
       <img src={starsImage} alt="Stars" />

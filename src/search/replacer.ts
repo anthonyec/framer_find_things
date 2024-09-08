@@ -1,18 +1,19 @@
 import type { Result } from "./types";
 
-import { framer } from "framer-plugin"
+import { framer } from "framer-plugin";
 import { isCanvasNode } from "./traits";
 import { replaceAllRanges } from "../utils/text";
 
 interface ReplacerOptions {
   onStarted: () => void;
+  onProgress: (count: number, total: number) => void;
   onCompleted: () => void;
 }
 
 interface StartOptions {
-  results: Result[]
-  replacement: string
-  preserveCase: boolean
+  results: Result[];
+  replacement: string;
+  preserveCase: boolean;
 }
 
 export class Replacer {
@@ -20,10 +21,12 @@ export class Replacer {
   private started: boolean = false;
   private batchSize: number = 10;
   private onStarted: ReplacerOptions["onStarted"];
+  private onProgress: ReplacerOptions["onProgress"];
   private onCompleted: ReplacerOptions["onCompleted"];
 
   constructor(options: ReplacerOptions) {
     this.onStarted = options.onStarted;
+    this.onProgress = options.onProgress;
     this.onCompleted = options.onCompleted;
   }
 
@@ -31,21 +34,21 @@ export class Replacer {
     return new Promise((resolve) => {
       const poll = () => {
         if (!this.indexing) {
-          return resolve()
+          return resolve();
         }
 
-        setTimeout(poll, 500)
-      }
+        setTimeout(poll, 500);
+      };
 
-      poll()
-    })
+      poll();
+    });
   }
 
   private async *replace(results: Result[]): AsyncGenerator<Result[]> {
     let batch: Result[] = [];
 
     for (const result of results) {
-      batch.push(result)
+      batch.push(result);
 
       if (batch.length === this.batchSize) {
         yield batch;
@@ -59,17 +62,19 @@ export class Replacer {
   }
 
   async start(options: StartOptions) {
-    if (this.started) return
+    if (this.started) return;
 
-    this.started = true
-    this.onStarted()
+    this.started = true;
+    this.onStarted();
 
-    await this.waitForIndexingToComplete()
+    await this.waitForIndexingToComplete();
+
+    let count: number = 0;
 
     for await (const batch of this.replace(options.results)) {
       for (const result of batch) {
-        const node = await framer.getNode(result.id)
-        if (!isCanvasNode(node)) continue
+        const node = await framer.getNode(result.id);
+        if (!isCanvasNode(node)) continue;
 
         const replacedName = replaceAllRanges(
           result.title,
@@ -80,10 +85,13 @@ export class Replacer {
 
         await node.setAttributes({ name: replacedName });
       }
+
+      count += batch.length;
+      this.onProgress(count, options.results.length);
     }
 
-    this.started = false
-    this.onCompleted()
+    this.started = false;
+    this.onCompleted();
   }
 
   setIndexing(indexing: boolean) {
