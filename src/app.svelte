@@ -13,6 +13,7 @@
   import { Indexer } from "./search/indexer";
   import Spinner from "./components/spinner.svelte";
   import PlaceholderResultRow from "./components/placeholder_result_row.svelte";
+  import starsImage from "./assets/stars.png"
 
   let indexing: boolean = $state(false)
   let selectedIndex: number = $state(-1)
@@ -34,13 +35,12 @@
   let results: Result[] = $derived(executeFilters(filters, entries))
 
 	let replacement: string = $state("");
-	let preserveCase: boolean = $state(false);
 	let searchProject: boolean = $state(false);
 
 	const performReplaceAll = () => {
     if (!replacement) return
 
-    replaceAll(results, replacement, preserveCase)
+    replaceAll(results, replacement, false)
 	};
 
   const navigateResults = (direction: number) => {
@@ -63,7 +63,8 @@
 
     const indexer = new Indexer({
       scope: searchProject ? "project" : "page",
-      include: [],
+      includedNodeTypes: ["FrameNode", "SVGNode", "ComponentInstanceNode"],
+      includedAttributes: [],
 
       onStarted: () => {
         indexing = true
@@ -87,62 +88,15 @@
 </script>
 
 <div class="app">
-  <SearchReplace
-    bind:query={textSearchFilter.query}
-    bind:caseSensitive={textSearchFilter.caseSensitive}
-    bind:regex={textSearchFilter.regex}
-    bind:replacement
-    bind:preserveCase
-    bind:searchProject
-    onReplaceAllClick={performReplaceAll}
-    onNavigate={navigateResults}
-  />
-
-  <div class="results">
-    {#each results as result (result.title, result.ranges)}
-      <ResultRow
-        selected={canvasSelection.includes(result.id)}
-        result={result}
-        onclick={() => focusResult(result)}
-      >
-        <HighlightRange
-          title={result.title}
-          ranges={result.ranges}
-          {replacement}
-          {preserveCase}
-          selected={canvasSelection.includes(result.id)}
-        />
-      </ResultRow>
-    {/each}
-
-    {#if indexing && textSearchFilter.query}
-      <PlaceholderResultRow index={0} total={5} width={30} />
-      <PlaceholderResultRow index={1} total={5} width={50} />
-      <PlaceholderResultRow index={2} total={5} width={20} />
-      <PlaceholderResultRow index={3} total={5} width={70} />
-      <PlaceholderResultRow index={4} total={5} width={20} />
-    {/if}
-
-    {#if results.length === 0 && textSearchFilter.query}
-      <div class="empty-state">
-        {#if !indexing}
-          No results
-        {/if}
-      </div>
-    {/if}
+  <div class="splash">
+    <img src={starsImage} alt="Stars">
   </div>
 
-  {#if results.length !== 0}
-    <div class="info">
-      {#if indexing}
-        <Spinner />
-      {/if}
-
-      <span class="count">
-        {results.length} {pluralize("result", "results", results.length)}
-      </span>
-    </div>
-  {/if}
+  <SearchReplace
+    bind:query={textSearchFilter.query}
+    bind:replacement={replacement}
+    onRenameClick={performReplaceAll}
+  />
 </div>
 
 <style>
@@ -152,10 +106,22 @@
     width: 100%;
     height: 100%;
     position: absolute;
+    gap: 10px
+  }
+
+  .splash {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .splash img {
+    width: 159px;
   }
 
   .results {
-    border-radius: 8px 8px 0 0;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     gap: 1px;

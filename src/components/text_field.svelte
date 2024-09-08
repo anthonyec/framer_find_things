@@ -1,0 +1,61 @@
+<script lang="ts">
+  import type { Snippet } from "svelte";
+
+  interface Props {
+    value: string;
+    placeholder: string;
+    leadingContent?: Snippet
+  }
+
+  let { value = $bindable(), placeholder, leadingContent }: Props = $props();
+
+  let inputElement: HTMLInputElement;
+
+  const focusInput = () => {
+    inputElement.focus()
+  }
+</script>
+
+<div class="text-field" onclick={focusInput} onkeydown={focusInput} role="textbox" tabindex="-1">
+  {#if leadingContent}
+    <div class="leading-content">
+      {@render leadingContent?.()}
+    </div>
+  {/if}
+
+  <input type="text" {placeholder} bind:value bind:this={inputElement} />
+</div>
+
+<style>
+  .text-field {
+    background-color: var(--framer-color-bg-tertiary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .text-field:focus-within {
+    box-shadow: 0 0 0 1px var(--framer-color-tint) inset;
+  }
+
+  .leading-content {
+    color: var(--framer-color-text-tertiary);
+    flex-shrink: 0;
+    pointer-events: none;
+  }
+
+  input {
+    background-color: transparent;
+    width: 100%;
+    padding: 0;
+    flex-shrink: 1;
+  }
+
+  input:focus {
+    box-shadow: none;
+  }
+</style>

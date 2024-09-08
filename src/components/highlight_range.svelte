@@ -6,7 +6,7 @@
 		title: string;
 		replacement: string | undefined;
 		ranges: Range[];
-		preserveCase: boolean;
+		preserveCase?: boolean;
 		selected: boolean
 	}
 
@@ -14,7 +14,7 @@
 		title,
 		replacement,
 		ranges,
-		preserveCase,
+		preserveCase = false,
 		selected
 	}: Props = $props()
 
