@@ -41,7 +41,6 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 15px;
     padding-top: 0;
   }
 
@@ -51,5 +50,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	:global([data-framer-theme="dark"]) .rename-button {
+		background: white;
+		color: black;
 	}
 </style>

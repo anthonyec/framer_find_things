@@ -1,32 +1,13 @@
-import type { IndexEntry } from "./types";
-import type {
-  FrameNode,
-  TextNode,
-  ComponentInstanceNode,
-  SVGNode,
-  AnyNode,
-} from "framer-plugin";
+import type { CanvasNode, IndexEntry } from "./types";
 
 import {
   framer,
-  isComponentInstanceNode,
   isFrameNode,
-  isSVGNode,
   isTextNode,
   isWebPageNode,
   WebPageNode,
 } from "framer-plugin";
-
-type CanvasNode = FrameNode | TextNode | ComponentInstanceNode | SVGNode;
-
-function isCanvasNode(value: unknown): value is CanvasNode {
-  if (isFrameNode(value)) return true;
-  if (isComponentInstanceNode(value)) return true;
-  if (isTextNode(value)) return true;
-  if (isSVGNode(value)) return true;
-
-  return false;
-}
+import { isCanvasNode } from "./traits";
 
 async function getDefaultCanvasNodeName(node: CanvasNode): Promise<string> {
   if (isFrameNode(node)) {
@@ -40,12 +21,12 @@ async function getDefaultCanvasNodeName(node: CanvasNode): Promise<string> {
   return "";
 }
 
-type IncludedAttributes = ("text" | "rect")[]
+type IncludedAttributes = ("text" | "rect")[];
 
 interface IndexerOptions {
   scope: "project" | "page";
   includedNodeTypes: IndexEntry["type"][];
-  includedAttributes?: IncludedAttributes,
+  includedAttributes?: IncludedAttributes;
   onStarted: () => void;
   onUpsert: (entry: IndexEntry) => void;
   onCompleted: () => void;
@@ -56,7 +37,7 @@ export class Indexer {
   private batchSize: number = 10;
   private scope: IndexerOptions["scope"] = "page";
   private includedNodeTypes: IndexerOptions["includedNodeTypes"];
-  private includedAttributes: IncludedAttributes = ["text", "rect"]
+  private includedAttributes: IncludedAttributes = ["text", "rect"];
   private abortRequested: boolean = false;
   private onStarted: IndexerOptions["onStarted"] | undefined;
   private onUpsert: IndexerOptions["onUpsert"] | undefined;
@@ -65,14 +46,18 @@ export class Indexer {
   constructor(options: IndexerOptions) {
     this.scope = options.scope;
     this.includedNodeTypes = options.includedNodeTypes;
-    this.includedAttributes = options.includedAttributes ?? this.includedAttributes
+    this.includedAttributes =
+      options.includedAttributes ?? this.includedAttributes;
     this.onStarted = options.onStarted;
     this.onUpsert = options.onUpsert;
     this.onCompleted = options.onCompleted;
   }
 
   private isIncludedNodeType(node: CanvasNode): boolean {
-    return this.includedNodeTypes.length !== 0 && this.includedNodeTypes.includes(node.__class)
+    return (
+      this.includedNodeTypes.length !== 0 &&
+      this.includedNodeTypes.includes(node.__class)
+    );
   }
 
   private upsertEntries(entries: IndexEntry[]) {
@@ -88,11 +73,18 @@ export class Indexer {
     for (const page of pages) {
       for await (const node of page.walk()) {
         if (!isCanvasNode(node)) continue;
-        if (!this.isIncludedNodeType(node)) continue
+        if (!this.isIncludedNodeType(node)) continue;
 
         const name = node.name ?? (await getDefaultCanvasNodeName(node));
-        const rect = this.includedAttributes.includes("rect") ? await node.getRect() : null;
-        const text = this.includedAttributes.includes("text") && isTextNode(node) ? await node.getText() : null;
+
+        const rect = this.includedAttributes.includes("rect")
+          ? await node.getRect()
+          : null;
+
+        const text =
+          this.includedAttributes.includes("text") && isTextNode(node)
+            ? await node.getText()
+            : null;
 
         batch.push({
           id: node.id,

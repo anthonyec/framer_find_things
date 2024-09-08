@@ -1,5 +1,8 @@
-import type { CanvasNode } from "framer-plugin";
 import type { Result } from "./types";
+
+import { framer } from "framer-plugin"
+import { isCanvasNode } from "./traits";
+import { replaceAllRanges } from "../utils/text";
 
 interface ReplacerOptions {
   onStarted: () => void;
@@ -63,8 +66,20 @@ export class Replacer {
 
     await this.waitForIndexingToComplete()
 
-    for await (const result of this.replace(options.results)) {
-      console.log(result)
+    for await (const batch of this.replace(options.results)) {
+      for (const result of batch) {
+        const node = await framer.getNode(result.id)
+        if (!isCanvasNode(node)) continue
+
+        const replacedName = replaceAllRanges(
+          result.title,
+          options.replacement,
+          result.ranges,
+          options.preserveCase
+        );
+
+        await node.setAttributes({ name: replacedName });
+      }
     }
 
     this.started = false

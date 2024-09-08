@@ -125,6 +125,7 @@
     height: 100%;
     position: absolute;
     gap: 10px;
+    padding: 0 15px 15px;
   }
 
   .splash {

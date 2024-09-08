@@ -68,8 +68,6 @@
     flex-direction: column;
     gap: 1px;
     height: 100%;
-    margin: 0 8px;
-    padding-bottom: 8px;
     overflow-y: scroll;
   }
 
