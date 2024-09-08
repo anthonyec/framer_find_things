@@ -4,6 +4,7 @@ import type {
   TextNode,
   ComponentInstanceNode,
   SVGNode,
+  AnyNode,
 } from "framer-plugin";
 
 import {
@@ -39,9 +40,12 @@ async function getDefaultCanvasNodeName(node: CanvasNode): Promise<string> {
   return "";
 }
 
+type IncludedAttributes = ("text" | "rect")[]
+
 interface IndexerOptions {
   scope: "project" | "page";
-  include: IndexEntry["type"][];
+  includedNodeTypes: IndexEntry["type"][];
+  includedAttributes?: IncludedAttributes,
   onStarted: () => void;
   onUpsert: (entry: IndexEntry) => void;
   onCompleted: () => void;
@@ -51,7 +55,8 @@ export class Indexer {
   private entries: Record<string, IndexEntry> = {};
   private batchSize: number = 10;
   private scope: IndexerOptions["scope"] = "page";
-  private include: IndexerOptions["include"];
+  private includedNodeTypes: IndexerOptions["includedNodeTypes"];
+  private includedAttributes: IncludedAttributes = ["text", "rect"]
   private abortRequested: boolean = false;
   private onStarted: IndexerOptions["onStarted"] | undefined;
   private onUpsert: IndexerOptions["onUpsert"] | undefined;
@@ -59,10 +64,15 @@ export class Indexer {
 
   constructor(options: IndexerOptions) {
     this.scope = options.scope;
-    this.include = options.include;
+    this.includedNodeTypes = options.includedNodeTypes;
+    this.includedAttributes = options.includedAttributes ?? this.includedAttributes
     this.onStarted = options.onStarted;
     this.onUpsert = options.onUpsert;
     this.onCompleted = options.onCompleted;
+  }
+
+  private isIncludedNodeType(node: CanvasNode): boolean {
+    return this.includedNodeTypes.length !== 0 && this.includedNodeTypes.includes(node.__class)
   }
 
   private upsertEntries(entries: IndexEntry[]) {
@@ -78,11 +88,11 @@ export class Indexer {
     for (const page of pages) {
       for await (const node of page.walk()) {
         if (!isCanvasNode(node)) continue;
-        if (this.include.length > 0 && !this.include.includes(node.__class)) continue
+        if (!this.isIncludedNodeType(node)) continue
 
-        const rect = await node.getRect();
-        const text = isTextNode(node) ? await node.getText() : null;
         const name = node.name ?? (await getDefaultCanvasNodeName(node));
+        const rect = this.includedAttributes.includes("rect") ? await node.getRect() : null;
+        const text = this.includedAttributes.includes("text") && isTextNode(node) ? await node.getText() : null;
 
         batch.push({
           id: node.id,
