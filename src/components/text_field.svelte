@@ -34,6 +34,7 @@
     align-items: center;
     gap: 8px;
     padding: 0 10px;
+    height: 30px;
     position: relative;
     overflow: hidden;
   }
@@ -51,6 +52,7 @@
   input {
     background-color: transparent;
     width: 100%;
+    height: 100%;
     padding: 0;
     flex-shrink: 1;
   }

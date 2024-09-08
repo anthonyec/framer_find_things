@@ -43,7 +43,7 @@
   }
 
 	.rename-button {
-		background: var(--framer-color-text);
-		color: var(--framer-color-text-reversed);
+		background: #111111;
+		color: white;
 	}
 </style>

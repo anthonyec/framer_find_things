@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { Result } from "../search/types";
+
+  import { framer } from "framer-plugin";
   import HighlightRange from "./highlight_range.svelte";
   import PlaceholderResultRow from "./placeholder_result_row.svelte";
   import ResultRow from "./result_row.svelte";
@@ -10,7 +12,6 @@
     indexing: boolean;
     results: Result[];
     selectedNodeIds: string[];
-    onFocusResult: (result: Result) => void;
   }
 
   let {
@@ -19,8 +20,12 @@
     indexing,
     results,
     selectedNodeIds,
-    onFocusResult,
   }: Props = $props();
+
+  const focusResult = async (result: Result) => {
+    await framer.setSelection(result.id);
+    await framer.zoomIntoView(result.id);
+  };
 </script>
 
 <div class="results">
@@ -28,7 +33,7 @@
     <ResultRow
       selected={selectedNodeIds.includes(result.id)}
       {result}
-      onclick={() => onFocusResult(result)}
+      onclick={() => focusResult(result)}
     >
       <HighlightRange
         title={result.title}
@@ -66,23 +71,6 @@
     margin: 0 8px;
     padding-bottom: 8px;
     overflow-y: scroll;
-  }
-
-  .info {
-    color: var(--framer-color-text-tertiary);
-    border-top: 1px solid var(--framer-color-divider);
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    height: 42px;
-    flex-shrink: 0;
-    user-select: none;
-  }
-
-  .count {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .empty-state {
