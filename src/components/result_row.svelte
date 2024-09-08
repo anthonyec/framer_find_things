@@ -49,9 +49,11 @@
     align-items: start;
     padding: 8px 10px;
     padding-right: 10px;
+    height: 30px;
     gap: 7px;
     transition: none;
     user-select: none;
+    word-break: break-all;
   }
 
   .result-row.selected {

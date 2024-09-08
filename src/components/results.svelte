@@ -1,10 +1,12 @@
 <script lang="ts">
   import type { Result } from "../search/types";
 
+  import { fade } from 'svelte/transition';
   import { framer } from "framer-plugin";
   import HighlightRange from "./highlight_range.svelte";
   import PlaceholderResultRow from "./placeholder_result_row.svelte";
   import ResultRow from "./result_row.svelte";
+  import VirtualList from "./virtual_list.svelte";
 
   interface Props {
     query: string;
@@ -24,28 +26,36 @@
 </script>
 
 <div class="results">
-  {#each results as result ((result.title, result.ranges))}
-    <ResultRow
-      selected={selectedNodeIds.includes(result.id)}
-      {result}
-      onclick={() => focusResult(result)}
-    >
-      <HighlightRange
-        title={result.title}
-        ranges={result.ranges}
-        {replacement}
-        selected={selectedNodeIds.includes(result.id)}
-      />
-    </ResultRow>
-  {/each}
+  <VirtualList entries={results}>
+    {#snippet item(result)}
+      {#key (result.title, result.ranges)}
+        <ResultRow
+          selected={selectedNodeIds.includes(result.id)}
+          {result}
+          onclick={() => focusResult(result)}
+        >
+          <HighlightRange
+            title={result.title}
+            ranges={result.ranges}
+            {replacement}
+            selected={selectedNodeIds.includes(result.id)}
+          />
+        </ResultRow>
+        {/key}
+      {/snippet}
 
-  {#if indexing && query}
-    <PlaceholderResultRow index={0} total={5} width={30} />
-    <PlaceholderResultRow index={1} total={5} width={50} />
-    <PlaceholderResultRow index={2} total={5} width={20} />
-    <PlaceholderResultRow index={3} total={5} width={70} />
-    <PlaceholderResultRow index={4} total={5} width={20} />
-  {/if}
+      {#snippet trailingContent()}
+        {#if indexing && query}
+          <div transition:fade={{ duration: 250 }}>
+            <PlaceholderResultRow index={0} total={5} width={30} />
+            <PlaceholderResultRow index={1} total={5} width={50} />
+            <PlaceholderResultRow index={2} total={5} width={20} />
+            <PlaceholderResultRow index={3} total={5} width={70} />
+            <PlaceholderResultRow index={4} total={5} width={20} />
+          </div>
+        {/if}
+      {/snippet}
+  </VirtualList>
 
   {#if results.length === 0 && query}
     <div class="empty-state">
@@ -63,7 +73,7 @@
     flex-direction: column;
     gap: 1px;
     height: 100%;
-    overflow-y: scroll;
+    overflow: hidden;
   }
 
   .empty-state {
