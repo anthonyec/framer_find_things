@@ -119,40 +119,4 @@
   .splash img {
     width: 159px;
   }
-
-  .results {
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    height: 100%;
-    margin: 0 8px;
-    padding-bottom: 8px;
-    overflow-y: scroll;
-  }
-
-  .info {
-    color: var(--framer-color-text-tertiary);
-    border-top: 1px solid var(--framer-color-divider);
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    height: 42px;
-    flex-shrink: 0;
-    user-select: none;
-  }
-
-  .count {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .empty-state {
-    color: var(--framer-color-text-tertiary);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 </style>
