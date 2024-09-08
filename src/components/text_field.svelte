@@ -4,16 +4,24 @@
   interface Props {
     value: string;
     placeholder: string;
+    focused?: boolean
+    disabled?: boolean
     leadingContent?: Snippet
   }
 
-  let { value = $bindable(), placeholder, leadingContent }: Props = $props();
+  let { value = $bindable(), placeholder, focused, disabled = false, leadingContent }: Props = $props();
 
   let inputElement: HTMLInputElement;
 
   const focusInput = () => {
     inputElement.focus()
   }
+
+  $effect(() => {
+    if (focused) {
+      inputElement.focus()
+    }
+  })
 </script>
 
 <div class="text-field" onclick={focusInput} onkeydown={focusInput} role="textbox" tabindex="-1">
@@ -23,7 +31,7 @@
     </div>
   {/if}
 
-  <input type="text" {placeholder} bind:value bind:this={inputElement} />
+  <input type="text" {placeholder} bind:value bind:this={inputElement} {disabled} />
 </div>
 
 <style>

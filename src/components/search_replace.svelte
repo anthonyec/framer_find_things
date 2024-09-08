@@ -1,36 +1,39 @@
 <script lang="ts">
   import TextField from "./text_field.svelte";
 	import iconSearch from "../assets/icon_search.svg?raw";
+  import Spinner from "./spinner.svelte";
 
   interface Props {
     query: string;
     replacement: string;
+		replacing: boolean
     onRenameClick?: () => void;
   }
 
   let {
     query = $bindable(),
     replacement = $bindable(),
+		replacing,
     onRenameClick = () => {},
   }: Props = $props();
-
-  let searchInput: HTMLInputElement;
-
-  $effect(() => {
-    searchInput.focus();
-  });
 </script>
 
 <div class="search-replace">
-  <TextField placeholder="Find" bind:value={query}>
+  <TextField placeholder="Find" bind:value={query} focused disabled={replacing}>
 		{#snippet leadingContent()}
 			{@html iconSearch}
 		{/snippet}
 	</TextField>
 
-  <TextField placeholder="Rename To…" bind:value={replacement} />
+  <TextField placeholder="Rename To…" bind:value={replacement} disabled={replacing} />
 
-  <button class="rename-button" onclick={onRenameClick} disabled={!replacement}>Rename</button>
+  <button class="rename-button" onclick={onRenameClick} disabled={!replacement || replacing}>
+		{#if replacing}
+			<Spinner />
+		{:else}
+			Rename
+		{/if}
+	</button>
 </div>
 
 <style>

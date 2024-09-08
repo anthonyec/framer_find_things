@@ -4,13 +4,14 @@
 
   import SearchReplace from "./components/search_replace.svelte";
   import { executeFilters } from "./search/execute_filters";
-  import { replaceAll } from "./search/replace_all";
   import { framer } from "framer-plugin";
   import { Indexer } from "./search/indexer";
   import starsImage from "./assets/stars.png";
   import Results from "./components/results.svelte";
+  import { Replacer } from "./search/replacer";
 
   let indexing: boolean = $state(false);
+  let replacing: boolean = $state(false);
   let selectedNodeIds: string[] = $state([]);
 
   let index: Record<string, IndexEntry> = $state({});
@@ -35,10 +36,24 @@
   let replacement: string = $state("");
   let searchProject: boolean = $state(false);
 
-  const performReplaceAll = () => {
+  const replacer = new Replacer({
+    onStarted: () => {
+      replacing = true;
+    },
+
+    onCompleted: () => {
+      replacing = false;
+    },
+  });
+
+  const replaceAll = () => {
     if (!replacement) return;
 
-    replaceAll(results, replacement, false);
+    replacer.start({
+      results,
+      replacement,
+      preserveCase: false
+    });
   };
 
   $effect(() => {
@@ -52,11 +67,17 @@
 
     const indexer = new Indexer({
       scope: searchProject ? "project" : "page",
-      includedNodeTypes: ["TextNode", "FrameNode", "SVGNode", "ComponentInstanceNode"],
+      includedNodeTypes: [
+        "TextNode",
+        "FrameNode",
+        "SVGNode",
+        "ComponentInstanceNode",
+      ],
       includedAttributes: [],
 
       onStarted: () => {
         indexing = true;
+        replacer.setIndexing(true);
       },
 
       onUpsert: (entry) => {
@@ -65,6 +86,7 @@
 
       onCompleted: () => {
         indexing = false;
+        replacer.setIndexing(false);
       },
     });
 
@@ -76,6 +98,7 @@
   });
 </script>
 
+<!-- svelte-ignore state_referenced_locally -->
 <div class="app">
   {#if results.length === 0}
     <div class="splash">
@@ -94,7 +117,8 @@
   <SearchReplace
     bind:query={textSearchFilter.query}
     bind:replacement
-    onRenameClick={performReplaceAll}
+    {replacing}
+    onRenameClick={replaceAll}
   />
 </div>
 
