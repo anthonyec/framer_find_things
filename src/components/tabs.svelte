@@ -1,15 +1,22 @@
 <script lang="ts">
-  interface Props {
-    active: string;
-    items: string[];
+  interface TabItem {
+    label: string;
+    active: () => boolean;
+    select: () => void;
   }
 
-  let { active, items }: Props = $props();
+  interface Props {
+    items: TabItem[];
+  }
+
+  let { items }: Props = $props();
 </script>
 
 <div class="tabs">
   {#each items as item}
-    <div class="tab" class:active={item === active}>{item}</div>
+    <button class="tab" class:active={item.active()} onclick={item.select}>
+      {item.label}
+    </button>
   {/each}
 </div>
 
@@ -25,8 +32,13 @@
   }
 
   .tab {
+    background: none;
+    border: 0;
+    width: auto;
+    padding: 0;
     color: var(--framer-color-text-tertiary);
     font-weight: 600;
+    user-select: none;
   }
 
   .tab.active {

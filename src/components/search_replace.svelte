@@ -6,29 +6,33 @@
   interface Props {
     query: string;
     replacement: string;
-		replacing: boolean
+		loading: boolean
+		showReplacement: boolean;
     onRenameClick?: () => void;
   }
 
   let {
     query = $bindable(),
     replacement = $bindable(),
-		replacing,
+		loading,
+		showReplacement,
     onRenameClick = () => {},
   }: Props = $props();
 </script>
 
 <div class="search-replace">
-  <TextField placeholder="Find" bind:value={query} focused disabled={replacing}>
+  <TextField placeholder="Find" bind:value={query} focused disabled={loading}>
 		{#snippet leadingContent()}
 			{@html iconSearch}
 		{/snippet}
 	</TextField>
 
-  <TextField placeholder="Rename To…" bind:value={replacement} disabled={replacing} />
+	{#if showReplacement}
+  	<TextField placeholder="Rename To…" bind:value={replacement} disabled={loading} />
+	{/if}
 
-  <button class="rename-button" onclick={onRenameClick} disabled={!replacement || replacing}>
-		{#if replacing}
+  <button class="rename-button" onclick={onRenameClick} disabled={!replacement || loading}>
+		{#if loading}
 			<Spinner type="solid" />
 		{:else}
 			Rename

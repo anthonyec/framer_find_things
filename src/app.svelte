@@ -11,6 +11,8 @@
   import { Replacer } from "./search/replacer";
   import Tabs from "./components/tabs.svelte";
 
+  let currentPage: "search" | "clean" = $state("search")
+
   let indexing: boolean = $state(false);
   let replacing: boolean = $state(false);
   let selectedNodeIds: string[] = $state([]);
@@ -99,7 +101,12 @@
 </script>
 
 <div class="app">
-  <Tabs active="Search" items={["Search", "Clean"]} />
+  <Tabs
+    items={[
+      { label: "Search", active: () => currentPage === "search", select: () => currentPage = "search" },
+      { label: "Clean", active: () => currentPage === "clean", select: () => currentPage = "clean" }
+    ]}
+  />
 
   {#if results.length === 0}
     <div class="splash">
@@ -111,14 +118,15 @@
       {selectedNodeIds}
       {indexing}
       {results}
-      {replacement}
+      replacement={currentPage === "search" ? replacement : ""}
     />
   {/if}
 
   <SearchReplace
     bind:query={textSearchFilter.query}
     bind:replacement
-    {replacing}
+    loading={replacing}
+    showReplacement={currentPage === "search"}
     onRenameClick={replaceAll}
   />
 </div>

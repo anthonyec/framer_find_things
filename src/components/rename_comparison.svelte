@@ -53,6 +53,7 @@
     height: 30px;
     gap: 10px;
     width: 100%;
+    user-select: none;
   }
 
   .chevron {

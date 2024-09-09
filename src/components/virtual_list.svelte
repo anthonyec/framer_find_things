@@ -31,8 +31,6 @@
     currentPage = Math.floor(scrollTop / pageHeight)
     remainingPages = totalViewportPages - currentPage
   };
-
-  $inspect(pageHeight)
 </script>
 
 <div class={["virtual-list", className].join(" ")} onscroll={scroll} bind:offsetHeight={viewportHeight}>
