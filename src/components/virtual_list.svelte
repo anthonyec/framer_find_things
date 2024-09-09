@@ -2,13 +2,14 @@
   import type { Snippet } from "svelte";
 
   interface Props {
+    class: string
     item: Snippet<[Entry]>;
     entries: Entry[];
     height?: number;
     trailingContent?: Snippet
   }
 
-  let { item, entries, height = 30, trailingContent }: Props = $props();
+  let { class: className, item, entries, height = 30, trailingContent }: Props = $props();
 
   let containerHeight = $derived(height * entries.length);
 
@@ -34,7 +35,7 @@
   $inspect(pageHeight)
 </script>
 
-<div class="virtual-list" onscroll={scroll} bind:offsetHeight={viewportHeight}>
+<div class={["virtual-list", className].join(" ")} onscroll={scroll} bind:offsetHeight={viewportHeight}>
   <div class="container" style:height={`${pageHeight}px`} style:padding-top={`${currentPage * pageHeight}px`} style:padding-bottom={`${remainingPages * pageHeight}px`}>
     {#each currentPageEntries as entry}
       <div class="entry">

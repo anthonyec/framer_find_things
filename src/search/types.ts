@@ -6,18 +6,11 @@ import type {
   TextNode,
 } from "framer-plugin";
 
-export type IndexNodeType =
-  | "unknown"
-  | "frame"
-  | "text"
-  | "component"
-  | "svg"
-  | "color-style"
-  | "text-style";
+export type IndexNodeType = Exclude<CanvasNode["__class"], "UnknownNode">;
 
 export interface IndexEntry {
   id: string;
-  type: Exclude<CanvasNode["__class"], "UnknownNode">;
+  type: IndexNodeType;
   name: string;
   text: string | null;
   rect: { x: number; y: number; width: number; height: number } | null;

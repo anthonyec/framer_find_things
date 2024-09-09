@@ -13,7 +13,7 @@ void framer.showUI({
   position: "top left",
   width: 300,
   height: 450,
-  resizable: false
+  resizable: true
 })
 
 const app = mount(App, {

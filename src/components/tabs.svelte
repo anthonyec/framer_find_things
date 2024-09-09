@@ -17,8 +17,9 @@
   .tabs {
     display: flex;
     align-items: center;
-    gap: 20px;
-    height: 100px;
+    gap: 10px;
+    height: 52px;
+    flex-shrink: 0;
     border-top: 1px solid var(--framer-color-divider);
     border-bottom: 1px solid var(--framer-color-divider);
   }

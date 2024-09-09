@@ -40,8 +40,7 @@
   .search-replace {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding-top: 0;
+    gap: 10px;
   }
 
 	.rename-button {

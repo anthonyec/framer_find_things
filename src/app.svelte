@@ -99,7 +99,7 @@
 </script>
 
 <div class="app">
-  <!-- <Tabs active="Search" items={["Search", "Clean"]} /> -->
+  <Tabs active="Search" items={["Search", "Clean"]} />
 
   {#if results.length === 0}
     <div class="splash">
@@ -130,7 +130,6 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    gap: 10px;
     padding: 0 15px 15px;
   }
 

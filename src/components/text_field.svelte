@@ -40,7 +40,7 @@
     border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     padding: 0 10px;
     height: 30px;
     position: relative;
