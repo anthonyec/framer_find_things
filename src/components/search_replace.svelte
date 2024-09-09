@@ -6,7 +6,8 @@
   interface Props {
     query: string;
     replacement: string;
-		loading: boolean
+		loading: boolean;
+		actionLabel: string;
 		showReplacement: boolean;
     onRenameClick?: () => void;
   }
@@ -15,6 +16,7 @@
     query = $bindable(),
     replacement = $bindable(),
 		loading,
+		actionLabel,
 		showReplacement,
     onRenameClick = () => {},
   }: Props = $props();
@@ -35,7 +37,7 @@
 		{#if loading}
 			<Spinner type="solid" />
 		{:else}
-			Rename
+			{actionLabel}
 		{/if}
 	</button>
 </div>

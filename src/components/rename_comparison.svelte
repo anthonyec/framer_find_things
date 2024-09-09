@@ -10,7 +10,7 @@
   let { before, after, children }: Props = $props();
 </script>
 
-<div class="replace-comparison">
+<div class="replace-comparison" class:grid={after}>
   <div class="before">
     <div class="icon">
       {@render children()}
@@ -47,13 +47,16 @@
 <style>
   .replace-comparison {
     color: #666666;
-    display: grid;
-    grid-template-columns: 1fr 55px 1fr;
     align-items: center;
     height: 30px;
     gap: 10px;
     width: 100%;
     user-select: none;
+  }
+
+  .replace-comparison.grid {
+    display: grid;
+    grid-template-columns: 1fr 55px 1fr;
   }
 
   .chevron {

@@ -127,6 +127,7 @@
     bind:replacement
     loading={replacing}
     showReplacement={currentPage === "search"}
+    actionLabel={currentPage === "search" ? "Rename" : "Clean Up"}
     onRenameClick={replaceAll}
   />
 </div>

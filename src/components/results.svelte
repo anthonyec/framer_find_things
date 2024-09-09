@@ -4,9 +4,6 @@
   import * as text from "../utils/text"
   import { fade } from 'svelte/transition';
   import { framer } from "framer-plugin";
-  import HighlightRange from "./highlight_range.svelte";
-  import PlaceholderResultRow from "./placeholder_result_row.svelte";
-  import ResultRow from "./result_row.svelte";
   import VirtualList from "./virtual_list.svelte";
   import RenameComparison from "./rename_comparison.svelte";
   import LayerIcon from "./layer_icon.svelte";
@@ -30,7 +27,7 @@
 </script>
 
 <div class="results">
-  <VirtualList class="list" entries={results}>
+  <VirtualList entries={results} paddingTop={15}>
     {#snippet item(result)}
       {#key (result.title, result.ranges)}
         <RenameComparison
