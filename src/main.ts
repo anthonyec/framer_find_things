@@ -11,7 +11,7 @@ import { mount } from 'svelte'
 void framer.showUI({
   title: "Find Replace",
   position: "top left",
-  width: 300,
+  width: 260,
   height: 450,
   resizable: true
 })

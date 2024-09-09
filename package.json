@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json",
-    "deploy": "surge ./dist findreplace.surge.sh"
+    "deploy": "surge ./dist framer-renamer.surge.sh"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^4.0.0-next.4",

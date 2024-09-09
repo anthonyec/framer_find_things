@@ -4,7 +4,7 @@
   import { fade } from 'svelte/transition';
 
   interface Props {
-    item: Snippet<[Entry]>;
+    item: Snippet<[Entry, number]>;
     entries: Entry[];
     height?: number;
     trailingContent?: Snippet
@@ -46,15 +46,15 @@
 
   <div class="scroll-area" onscroll={scroll} bind:offsetHeight={viewportHeight} bind:this={scrollArea}>
     <div class="container" style:height={`${pageHeight}px`} style:padding-top={`${(currentPage * pageHeight) + paddingTop}px`} style:padding-bottom={`${remainingPages * pageHeight}px`}>
-      {#each currentPageEntries as entry}
+      {#each currentPageEntries as entry, index}
         <div class="entry">
-          {@render item(entry)}
+          {@render item(entry, (itemsPerPage * currentPage) + index)}
         </div>
       {/each}
 
-      {#each nextPageEntries as entry}
+      {#each nextPageEntries as entry, index}
         <div class="entry">
-          {@render item(entry)}
+          {@render item(entry, (itemsPerPage * (currentPage + 1)) + index)}
         </div>
       {/each}
 

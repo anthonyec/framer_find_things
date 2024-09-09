@@ -27,6 +27,7 @@ interface IndexerOptions {
   scope: "project" | "page";
   includedNodeTypes: IndexEntry["type"][];
   includedAttributes?: IncludedAttributes;
+  onRestarted: () => void;
   onStarted: () => void;
   onUpsert: (entry: IndexEntry) => void;
   onCompleted: () => void;
@@ -39,15 +40,17 @@ export class Indexer {
   private includedNodeTypes: IndexerOptions["includedNodeTypes"];
   private includedAttributes: IncludedAttributes = ["text", "rect"];
   private abortRequested: boolean = false;
-  private onStarted: IndexerOptions["onStarted"] | undefined;
-  private onUpsert: IndexerOptions["onUpsert"] | undefined;
-  private onCompleted: IndexerOptions["onCompleted"] | undefined;
+  private onRestarted: IndexerOptions["onRestarted"];
+  private onStarted: IndexerOptions["onStarted"];
+  private onUpsert: IndexerOptions["onUpsert"];
+  private onCompleted: IndexerOptions["onCompleted"];
 
   constructor(options: IndexerOptions) {
     this.scope = options.scope;
     this.includedNodeTypes = options.includedNodeTypes;
     this.includedAttributes =
       options.includedAttributes ?? this.includedAttributes;
+    this.onRestarted = options.onRestarted;
     this.onStarted = options.onStarted;
     this.onUpsert = options.onUpsert;
     this.onCompleted = options.onCompleted;
@@ -131,5 +134,12 @@ export class Indexer {
     }
 
     this.onCompleted?.();
+  }
+
+  async restart() {
+    console.log("restart")
+    this.entries = {};
+    this.onRestarted();
+    return this.start();
   }
 }

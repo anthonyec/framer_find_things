@@ -28,7 +28,7 @@
 
 <div class="results">
   <VirtualList entries={results} paddingTop={15}>
-    {#snippet item(result)}
+    {#snippet item(result, index)}
       {#key (result.title, result.ranges)}
         <RenameComparison
           before={result.title}
@@ -37,7 +37,7 @@
             replacement,
             result.ranges,
             false
-          ) : ""}
+          ) : `${result.title} ${index}`}
         >
           <LayerIcon type={result.entry.type} />
         </RenameComparison>

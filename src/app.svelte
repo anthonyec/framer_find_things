@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { IndexEntry, Result } from "./search/types";
+  import type { CanvasNode, IndexEntry, Result } from "./search/types";
   import type { CategoryFilter, Filter, TextFilter } from "./search/filters";
 
   import SearchReplace from "./components/search_replace.svelte";
@@ -8,9 +8,12 @@
   import { Indexer } from "./search/indexer";
   import starsImage from "./assets/stars.png";
   import Results from "./components/results.svelte";
-  import { Replacer } from "./search/replacer";
+  import { BatchProcessResults } from "./search/batch_process_results";
   import Tabs from "./components/tabs.svelte";
+  import { assertNever } from "./utils/assert";
+  import { replaceAllRanges } from "./utils/text";
 
+  let currentRootId: string = $state()
   let currentPage: "search" | "clean" = $state("search")
 
   let indexing: boolean = $state(false);
@@ -37,30 +40,68 @@
   let results: Result[] = $derived(executeFilters(filters, entries));
 
   let replacement: string = $state("");
-  let searchProject: boolean = $state(false);
 
-  const replacer = new Replacer({
+  const indexer = new Indexer({
+      scope: "page",
+      includedNodeTypes: ["FrameNode", "SVGNode", "ComponentInstanceNode"],
+      includedAttributes: [],
+
+      onRestarted: () => {
+        index = {}
+      },
+
+      onStarted: () => {
+        indexing = true;
+        replacer.setReady(false);
+      },
+
+      onUpsert: (entry) => {
+        index[entry.id] = entry;
+      },
+
+      onCompleted: () => {
+        indexing = false;
+        replacer.setReady(true);
+      },
+    });
+
+  const replacer = new BatchProcessResults({
+    process: async (result: Result, node: CanvasNode, index: number) => {
+      switch(currentPage) {
+        case "search":
+          const replacedName = replaceAllRanges(
+            result.title,
+            replacement,
+            result.ranges,
+            false
+          );
+
+          await node.setAttributes({ name: replacedName });
+          return
+
+        case "clean":
+          return
+
+        default:
+          assertNever(currentPage)
+      }
+    },
+
     onStarted: () => {
       replacing = true;
     },
 
-    onProgress: (count, total) => {
-      console.log(count, total)
-    },
+    onProgress: (count, total) => {},
 
     onCompleted: () => {
       replacing = false;
+      indexer.restart()
     },
   });
 
   const replaceAll = () => {
     if (!replacement) return;
-
-    replacer.start({
-      results,
-      replacement,
-      preserveCase: false,
-    });
+    replacer.start(results);
   };
 
   $effect(() => {
@@ -70,32 +111,18 @@
   });
 
   $effect(() => {
+    currentRootId;
+    indexer.restart()
+  })
+
+  $effect(() => {
     index = {};
-
-    const indexer = new Indexer({
-      scope: searchProject ? "project" : "page",
-      includedNodeTypes: ["FrameNode", "SVGNode", "ComponentInstanceNode"],
-      includedAttributes: [],
-
-      onStarted: () => {
-        indexing = true;
-        replacer.setIndexing(true);
-      },
-
-      onUpsert: (entry) => {
-        index[entry.id] = entry;
-      },
-
-      onCompleted: () => {
-        indexing = false;
-        replacer.setIndexing(false);
-      },
-    });
 
     indexer.start();
 
     return framer.subscribeToCanvasRoot(async () => {
-      // indexer.start()
+      const root = await framer.getCanvasRoot()
+      currentRootId = root.id
     });
   });
 </script>
@@ -151,7 +178,7 @@
   }
 
   .splash img {
-    width: 159px;
+    width: 190px;
   }
 
   .info {
