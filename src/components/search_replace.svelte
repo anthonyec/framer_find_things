@@ -55,6 +55,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		user-select: none;
 	}
 
 	:global([data-framer-theme="dark"]) .rename-button {

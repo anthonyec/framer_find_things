@@ -7,7 +7,8 @@
   import { executeFilters } from "./search/execute_filters";
   import { framer } from "framer-plugin";
   import { Indexer } from "./search/indexer";
-  import starsImage from "./assets/stars.png";
+  import starsLightImage from "./assets/stars_light.png";
+  import starsDarkImage from "./assets/stars_dark.png";
   import Results from "./components/results.svelte";
   import { BatchProcessResults } from "./search/batch_process_results";
   import Tabs from "./components/tabs.svelte";
@@ -147,7 +148,8 @@
   <div class="results">
     {#if !textSearchFilter.query}
       <div class="empty-state" transition:fade={{ duration: 80 }}>
-        <img src={starsImage} alt="Stars" />
+        <img class="light" src={starsLightImage} alt="Stars" />
+        <img class="dark" src={starsDarkImage} alt="Stars" />
       </div>
     {/if}
 
@@ -198,6 +200,7 @@
   .results {
     position: relative;
     height: 100%;
+    overflow: hidden;
   }
 
   .empty-state {
@@ -207,6 +210,14 @@
     user-select: none;
     position: absolute;
     inset: 0;
+  }
+
+  :global([data-framer-theme="dark"]) .empty-state img.light {
+    display: none;
+  }
+
+  :global([data-framer-theme="light"]) .empty-state img.dark {
+    display: none;
   }
 
   .empty-state img {
