@@ -51,6 +51,7 @@
 
     onRestarted: () => {
       index = {};
+      indexing = false;
     },
 
     onStarted: () => {

@@ -75,6 +75,8 @@ export class Indexer {
 
     for (const page of pages) {
       for await (const node of page.walk()) {
+        if (this.abortRequested) return
+
         if (!isCanvasNode(node)) continue;
         if (!this.isIncludedNodeType(node)) continue;
 
@@ -125,11 +127,10 @@ export class Indexer {
   async start() {
     const pages = await this.getPages();
 
+    this.abortRequested = false;
     this.onStarted?.();
 
     for await (const batch of this.crawl(pages)) {
-      if (this.abortRequested) return;
-
       this.upsertEntries(batch);
     }
 
@@ -137,7 +138,7 @@ export class Indexer {
   }
 
   async restart() {
-    console.log("restart")
+    this.abortRequested = true;
     this.entries = {};
     this.onRestarted();
     return this.start();

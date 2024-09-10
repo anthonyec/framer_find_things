@@ -49,7 +49,7 @@
 
   {#if results.length === 0 && query && !indexing}
     <div class="empty-state">
-      No results
+      No results.
     </div>
   {/if}
 </div>
@@ -70,5 +70,6 @@
     justify-content: center;
     position: absolute;
     inset: 0;
+    user-select: none;
   }
 </style>
