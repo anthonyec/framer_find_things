@@ -12,10 +12,11 @@
   import { BatchProcessResults } from "./search/batch_process_results";
   import Tabs from "./components/tabs.svelte";
   import { assertNever } from "./utils/assert";
-  import { replaceAllRanges } from "./utils/text";
+  import { renameResult } from "./search/result_processors/rename_result";
+  import { cleanUpResult } from "./search/result_processors/clean_up_result";
 
   let currentRootId: string | undefined = $state();
-  let currentPage: "search" | "clean" = $state("search");
+  let currentMode: "search" | "clean" = $state("search");
 
   let indexing: boolean = $state(false);
   let replacing: boolean = $state(false);
@@ -53,7 +54,7 @@
 
     onStarted: () => {
       indexing = true;
-      replacer.setReady(false);
+      resultsRenamer.setReady(false);
     },
 
     onUpsert: (entry) => {
@@ -62,29 +63,29 @@
 
     onCompleted: () => {
       indexing = false;
-      replacer.setReady(true);
+      resultsRenamer.setReady(true);
     },
   });
 
-  const replacer = new BatchProcessResults({
-    process: async (result: Result, node: CanvasNode, index: number) => {
-      switch (currentPage) {
+  const resultsRenamer = new BatchProcessResults({
+    process: async (result: Result, node: CanvasNode) => {
+      switch (currentMode) {
         case "search":
-          const replacedName = replaceAllRanges(
-            result.title,
-            replacement,
-            result.ranges,
-            false
-          );
+          await node.setAttributes({
+            name: renameResult(result, replacement),
+          });
 
-          await node.setAttributes({ name: replacedName });
           return;
 
         case "clean":
+          await node.setAttributes({
+            name: cleanUpResult(result),
+          });
+
           return;
 
         default:
-          assertNever(currentPage);
+          assertNever(currentMode);
       }
     },
 
@@ -102,7 +103,7 @@
 
   const replaceAll = () => {
     if (!replacement) return;
-    replacer.start(results);
+    resultsRenamer.start(results);
   };
 
   $effect(() => {
@@ -132,13 +133,13 @@
     items={[
       {
         label: "Search",
-        active: () => currentPage === "search",
-        select: () => (currentPage = "search"),
+        active: () => currentMode === "search",
+        select: () => (currentMode = "search"),
       },
       {
         label: "Clean",
-        active: () => currentPage === "clean",
-        select: () => (currentPage = "clean"),
+        active: () => currentMode === "clean",
+        select: () => (currentMode = "clean"),
       },
     ]}
   />
@@ -157,7 +158,18 @@
           {selectedNodeIds}
           {indexing}
           {results}
-          replacement={currentPage === "search" ? replacement : ""}
+          getTextAfterRename={(result) => {
+            switch (currentMode) {
+              case "search":
+                return renameResult(result, replacement);
+
+              case "clean":
+                return cleanUpResult(result);
+
+              default:
+                assertNever(currentMode);
+            }
+          }}
         />
       </div>
     {/if}
@@ -167,8 +179,8 @@
     bind:query={textSearchFilter.query}
     bind:replacement
     loading={replacing}
-    showReplacement={currentPage === "search"}
-    actionLabel={currentPage === "search" ? "Rename" : "Clean Up"}
+    showReplacement={currentMode === "search"}
+    actionLabel={currentMode === "search" ? "Rename" : "Clean Up"}
     onRenameClick={replaceAll}
   />
 </div>
