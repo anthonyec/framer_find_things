@@ -57,11 +57,9 @@
     {/snippet}
   </VirtualList>
 
-  {#if results.length === 0 && query}
+  {#if results.length === 0 && query && !indexing}
     <div class="empty-state">
-      {#if !indexing}
-        No results
-      {/if}
+      No results
     </div>
   {/if}
 </div>
@@ -75,15 +73,12 @@
     overflow: hidden;
   }
 
-  :global(.list) {
-    padding-top: 15px;
-  }
-
   .empty-state {
     color: var(--framer-color-text-tertiary);
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    inset: 0;
   }
 </style>

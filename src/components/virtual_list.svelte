@@ -13,10 +13,10 @@
 
   let { item, entries, height = 30, trailingContent, paddingTop = 0 }: Props = $props();
 
-  let scrollArea: HTMLDivElement
+  let scrollAreaElement: HTMLDivElement
+
   let scrollTop = $state(0)
   let containerHeight = $derived(height * entries.length);
-
   let viewportHeight = $state(0)
   let totalViewportPages = $derived(Math.max(Math.floor(containerHeight / viewportHeight), 0))
   let itemsPerPage = $derived(Math.ceil(viewportHeight / height))
@@ -28,7 +28,7 @@
   let nextPageEntries = $derived(entries.slice((currentPage + 1) * itemsPerPage, ((currentPage + 1) * itemsPerPage) + itemsPerPage))
 
   const scroll = () => {
-    scrollTop = scrollArea.scrollTop;
+    scrollTop = scrollAreaElement.scrollTop;
 
     currentPage = Math.floor(scrollTop / pageHeight)
     remainingPages = totalViewportPages - currentPage
@@ -37,6 +37,11 @@
   $effect(() => {
     scroll()
   })
+
+  $effect(() => {
+    entries;
+    scrollAreaElement.scrollTo(0, 0)
+  })
 </script>
 
 <div class="virtual-list">
@@ -44,7 +49,7 @@
     <div class="overflow-gradient-top" transition:fade={{ duration: 250 }}></div>
   {/if}
 
-  <div class="scroll-area" onscroll={scroll} bind:offsetHeight={viewportHeight} bind:this={scrollArea}>
+  <div class="scroll-area" onscroll={scroll} bind:offsetHeight={viewportHeight} bind:this={scrollAreaElement}>
     <div class="container" style:height={`${pageHeight}px`} style:padding-top={`${(currentPage * pageHeight) + paddingTop}px`} style:padding-bottom={`${remainingPages * pageHeight}px`}>
       {#each currentPageEntries as entry, index}
         <div class="entry">
