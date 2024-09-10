@@ -107,6 +107,24 @@
     resultsRenamer.start(results);
   };
 
+  const throttle = (callback: () => void, delay: number = 1000) => {
+    let timeout: number | null = null;
+
+    return () => {
+      if (timeout) return;
+
+      timeout = setTimeout(() => {
+        callback();
+        timeout = null;
+      }, delay);
+    };
+  };
+
+  const throttledStartIndexer = throttle(() => {
+    console.log("restarted");
+    indexer.restart();
+  });
+
   $effect(() => {
     return framer.subscribeToSelection((selection) => {
       selectedNodeIds = selection.map((node) => node.id);
@@ -125,6 +143,8 @@
     return framer.subscribeToCanvasRoot(async () => {
       const root = await framer.getCanvasRoot();
       currentRootId = root.id;
+
+      throttledStartIndexer();
     });
   });
 </script>
