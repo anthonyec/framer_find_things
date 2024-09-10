@@ -39,6 +39,7 @@
     font-weight: 600;
     user-select: none;
     padding: 0 5px;
+    transition: color 200ms ease;
   }
 
   .tab:first-child {
@@ -46,7 +47,7 @@
   }
 
   .tab:active {
-    background: none
+    background: none;
   }
 
   .tab.active {
