@@ -2,15 +2,17 @@
   import type { Snippet } from "svelte";
 
   interface Props {
+    selected: boolean;
     before: string;
     after: string;
     children: Snippet;
+    onclick: () => void
   }
 
-  let { before, after, children }: Props = $props();
+  let { selected, before, after, onclick, children }: Props = $props();
 </script>
 
-<div class="replace-comparison" class:grid={after}>
+<button class="replace-comparison" class:grid={after} class:selected={selected} {onclick}>
   <div class="before">
     <div class="icon">
       {@render children()}
@@ -42,7 +44,7 @@
       </div>
     </div>
   {/if}
-</div>
+</button>
 
 <style>
   .replace-comparison {
@@ -53,6 +55,13 @@
     user-select: none;
   }
 
+  .replace-comparison, .replace-comparison:active, .replace-comparison:hover {
+    background: none;
+    text-align: left;
+    font-weight: 500;
+    padding: 0;
+  }
+
   :global([data-framer-theme="dark"]) .replace-comparison {
     color: #999999;
   }
@@ -60,6 +69,8 @@
   :global([data-framer-theme="light"]) .replace-comparison {
     color: #666666;
   }
+
+  .replace-comparison.selected {}
 
   .replace-comparison.grid {
     display: grid;

@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Result } from "../search/types";
-  import type { RenamerMode } from "../app.svelte";
 
   import { fade } from 'svelte/transition';
   import { framer } from "framer-plugin";
@@ -17,17 +16,23 @@
     getTextAfterRename: (result: Result) => string
   }
 
-  let { query, indexing, results, getTextAfterRename }: Props = $props();
+  let { query, indexing, results, selectedNodeIds, getTextAfterRename }: Props = $props();
 
+  const focusResult = async (result: Result) => {
+    await framer.setSelection(result.id);
+    await framer.zoomIntoView(result.id, { maxZoom: 1 });
+  };
 </script>
 
 <div class="results">
   <VirtualList entries={results} paddingTop={15}>
-    {#snippet item(result, index)}
+    {#snippet item(result)}
       {#key (result.title, result.ranges)}
         <RenameComparison
+          selected={selectedNodeIds.includes(result.id)}
           before={result.title}
           after={getTextAfterRename(result)}
+          onclick={() => focusResult(result)}
         >
           <LayerIcon type={result.entry.type} />
         </RenameComparison>
