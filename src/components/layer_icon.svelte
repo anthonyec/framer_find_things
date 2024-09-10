@@ -9,8 +9,6 @@
 
   const width = 12;
   const height = 12;
-
-  console.log(type);
 </script>
 
 <div class="icon" style:width={`${width}px`} style:height={`${height}px`}>
