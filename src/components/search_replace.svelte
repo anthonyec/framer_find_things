@@ -7,6 +7,7 @@
     query: string;
     replacement: string;
 		loading: boolean;
+		disableAction: boolean
 		actionLabel: string;
 		showReplacement: boolean;
     onRenameClick?: () => void;
@@ -16,24 +17,31 @@
     query = $bindable(),
     replacement = $bindable(),
 		loading,
+		disableAction,
 		actionLabel,
 		showReplacement,
     onRenameClick = () => {},
   }: Props = $props();
+
+	const handleTextFieldKeyDown = (event: KeyboardEvent) => {
+		if (event.key === "Enter") {
+			onRenameClick()
+		}
+	}
 </script>
 
 <div class="search-replace">
-  <TextField placeholder="Find" bind:value={query} focused disabled={loading}>
+  <TextField placeholder="Find" bind:value={query} focused disabled={loading} onkeydown={handleTextFieldKeyDown}>
 		{#snippet leadingContent()}
 			{@html iconSearch}
 		{/snippet}
 	</TextField>
 
 	{#if showReplacement}
-  	<TextField placeholder="Rename To…" bind:value={replacement} disabled={loading} />
+  	<TextField placeholder="Rename To…" bind:value={replacement} disabled={loading} onkeydown={handleTextFieldKeyDown}/>
 	{/if}
 
-  <button class="rename-button" onclick={onRenameClick} disabled={!replacement || loading}>
+  <button class="rename-button" onclick={onRenameClick} disabled={loading || disableAction}>
 		{#if loading}
 			<Spinner type="solid" />
 		{:else}

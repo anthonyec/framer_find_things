@@ -103,8 +103,7 @@
     },
   });
 
-  const replaceAll = () => {
-    if (!replacement) return;
+  const renameResults = () => {
     resultsRenamer.start(results);
   };
 
@@ -182,9 +181,10 @@
     bind:query={textSearchFilter.query}
     bind:replacement
     loading={replacing}
+    disableAction={currentMode === "search" && !replacement}
     showReplacement={currentMode === "search"}
     actionLabel={currentMode === "search" ? "Rename" : "Clean Up"}
-    onRenameClick={replaceAll}
+    onRenameClick={renameResults}
   />
 </div>
 

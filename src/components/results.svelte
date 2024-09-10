@@ -54,7 +54,7 @@
 
   {#if results.length === 0 && query && !indexing}
     <div class="empty-state">
-      No results.
+      No Results
     </div>
   {/if}
 </div>

@@ -7,9 +7,10 @@
     focused?: boolean
     disabled?: boolean
     leadingContent?: Snippet
+    onkeydown: (event: KeyboardEvent) => void;
   }
 
-  let { value = $bindable(), placeholder, focused, disabled = false, leadingContent }: Props = $props();
+  let { value = $bindable(), placeholder, focused, disabled = false, leadingContent, onkeydown }: Props = $props();
 
   let inputElement: HTMLInputElement;
 
@@ -31,7 +32,7 @@
     </div>
   {/if}
 
-  <input type="text" {placeholder} bind:value bind:this={inputElement} {disabled} />
+  <input type="text" {placeholder} bind:value bind:this={inputElement} {disabled} {onkeydown} />
 </div>
 
 <style>
