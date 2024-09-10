@@ -60,6 +60,6 @@
 
 	:global([data-framer-theme="dark"]) .rename-button {
 		background: white;
-		color: black;
+		color: #111111;
 	}
 </style>

@@ -25,7 +25,7 @@
     <div class="chevron">
       <svg width="5px" height="8px" viewBox="0 0 5 8">
         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-            <g transform="translate(1, 1)" fill-rule="nonzero" stroke="#999999" stroke-width="1.5">
+            <g transform="translate(1, 1)" fill-rule="nonzero" stroke="currentColor" stroke-width="1.5">
                 <polyline id="Path" points="0 6 3 3 0 0"></polyline>
             </g>
         </g>
@@ -46,12 +46,19 @@
 
 <style>
   .replace-comparison {
-    color: #666666;
     align-items: center;
     height: 30px;
     gap: 10px;
     width: 100%;
     user-select: none;
+  }
+
+  :global([data-framer-theme="dark"]) .replace-comparison {
+    color: #999999;
+  }
+
+  :global([data-framer-theme="light"]) .replace-comparison {
+    color: #666666;
   }
 
   .replace-comparison.grid {
@@ -60,8 +67,15 @@
   }
 
   .chevron {
-    color: var(--framer-color-text-tertiary);
     place-self: center;
+  }
+
+  :global([data-framer-theme="dark"]) .chevron {
+    color: #666666;
+  }
+
+  :global([data-framer-theme="light"]) .chevron {
+    color: #999999;
   }
 
   .before,

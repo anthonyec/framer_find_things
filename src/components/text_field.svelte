@@ -68,4 +68,8 @@
   input:focus {
     box-shadow: none;
   }
+
+  input::placeholder {
+    color: #999999;
+  }
 </style>

@@ -221,7 +221,7 @@
   }
 
   .empty-state img {
-    width: 190px;
+    width: 200px;
   }
 
   .list {

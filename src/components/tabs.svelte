@@ -24,7 +24,6 @@
   .tabs {
     display: flex;
     align-items: center;
-    gap: 10px;
     height: 52px;
     flex-shrink: 0;
     border-top: 1px solid var(--framer-color-divider);
@@ -36,9 +35,18 @@
     border: 0;
     width: auto;
     padding: 0;
-    color: var(--framer-color-text-tertiary);
+    color: #999999;
     font-weight: 600;
     user-select: none;
+    padding: 0 5px;
+  }
+
+  .tab:first-child {
+    padding-left: 0;
+  }
+
+  .tab:active {
+    background: none
   }
 
   .tab.active {
