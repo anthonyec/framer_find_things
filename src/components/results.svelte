@@ -25,7 +25,7 @@
 </script>
 
 <div class="results">
-  <VirtualList entries={results} paddingTop={15}>
+  <VirtualList key={query} entries={results} paddingTop={15}>
     {#snippet item(result)}
       {#key (result.title, result.ranges)}
         <RenameComparison

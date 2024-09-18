@@ -144,6 +144,8 @@
       const root = await framer.getCanvasRoot();
       currentRootId = root.id;
 
+      if (replacing) return
+
       throttledStartIndexer();
     });
   });

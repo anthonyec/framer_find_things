@@ -4,6 +4,7 @@
   import { fade } from 'svelte/transition';
 
   interface Props {
+    key: string
     item: Snippet<[Entry, number]>;
     entries: Entry[];
     height?: number;
@@ -11,7 +12,7 @@
     paddingTop?: number
   }
 
-  let { item, entries, height = 30, trailingContent, paddingTop = 0 }: Props = $props();
+  let { key, item, entries, height = 30, trailingContent, paddingTop = 0 }: Props = $props();
 
   let scrollAreaElement: HTMLDivElement
 
@@ -39,7 +40,7 @@
   })
 
   $effect(() => {
-    entries;
+    key;
     scrollAreaElement.scrollTo(0, 0)
   })
 </script>

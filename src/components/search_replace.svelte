@@ -41,7 +41,7 @@
   	<TextField placeholder="Rename To…" bind:value={replacement} disabled={loading} onkeydown={handleTextFieldKeyDown}/>
 	{/if}
 
-  <button class="rename-button" onclick={onRenameClick} disabled={loading || disableAction}>
+  <button class="rename-button" onclick={onRenameClick} disabled={disableAction}>
 		{#if loading}
 			<Spinner type="solid" />
 		{:else}
